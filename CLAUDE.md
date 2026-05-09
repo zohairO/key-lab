@@ -39,7 +39,8 @@ No test runner yet. First targets when added: sound-engine layering math, compat
 
 - Commit frequently — every logical chunk, not batched.
 - Prefix in conventional style (`feat:`, `fix:`, `chore:`, `docs:`).
-- HEREDOC for multi-line messages; include `Co-Authored-By: Claude` trailer.
+- HEREDOC for multi-line messages.
+- **Do NOT add a `Co-Authored-By: Claude` trailer.** Commits are authored by the user only.
 
 ## Scope discipline
 

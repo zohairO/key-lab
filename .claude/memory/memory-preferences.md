@@ -8,5 +8,5 @@ How the user wants to collaborate on this project.
 - **Decisions get recorded.** Architectural decisions → `.claude/rules/architecture.md`. Dated decisions → `.claude/memory/memory-decisions.md`.
 - **Correctness over ceremony.** No premature abstractions, no error handling for impossible cases, no "future-proofing" that isn't requested.
 - **No em dashes in user-facing writing.** OK in internal prose like this memory system.
-- **OK with `Co-Authored-By: Claude` trailer on commits.** Don't strip it; don't ask again.
+- **No `Co-Authored-By: Claude` trailer on commits.** User explicitly does not want AI co-authorship attribution. Don't add it; don't ask again.
 - **Commit frequently.** Every logical chunk, not batched at the end.

@@ -19,3 +19,4 @@ Date-stamped architectural and product decisions. Most recent at top.
 - **Tech stack confirmed:** React + TypeScript + Tailwind + Vite. R3F + Drei + Three.js for 3D. Web Audio API + (later) Tone.js for audio. Supabase + Vercel reserved for Phase 2.
 - **Key event mapping:** use `event.code` (physical key position), not `event.key` (label varies by layout).
 - **Claude scaffolding set up.** `.claude/rules/architecture.md` + `.claude/memory/{profile,preferences,decisions,sessions}.md` + root `CLAUDE.md`, mirroring the subscription-sentry structure. Update-as-you-go memory protocol mandated.
+- **No `Co-Authored-By: Claude` trailer on commits.** User reversed the subscription-sentry default; commits in this repo are user-authored only. **How to apply:** never append a Claude co-author trailer to commit messages in this project.
