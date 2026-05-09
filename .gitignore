@@ -18,3 +18,4 @@ dist-ssr
 .env.*.local
 
 vite.config.ts.timestamp-*
+*.tsbuildinfo
