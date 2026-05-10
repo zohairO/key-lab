@@ -6,7 +6,8 @@ import { holyPandas } from './data/sound-packs/holy-pandas';
 import { cherryMxBrownPbt } from './data/sound-packs/cherrymx-brown-pbt';
 import { cherryMxBluePbt } from './data/sound-packs/cherrymx-blue-pbt';
 import { KEYCAP_LABEL } from './data/keycap-profiles';
-import type { KeycapProfile } from './types';
+import { BOARD_CONFIG, BOARD_TYPE_OPTIONS } from './data/board-types';
+import type { BoardType, KeycapProfile } from './types';
 import { useAudioEngine } from './hooks/useAudioEngine';
 import { usePressedKeys } from './hooks/usePressedKeys';
 import { readBuildHash, writeBuildHash } from './lib/url-state';
@@ -16,8 +17,8 @@ const PACKS: SoundPack[] = [cherryMxBrownPbt, holyPandas, cherryMxBluePbt];
 const KEYCAP_OPTIONS: KeycapProfile[] = ['thin-abs', 'thick-pbt', 'tall-pbt'];
 
 export default function App() {
-  // Hydrate from URL on mount; fall back to defaults.
   const initial = useMemo(() => readBuildHash(), []);
+  const [boardType, setBoardType] = useState<BoardType>(initial.boardType ?? 'mechanical');
   const [packId, setPackId] = useState<string>(
     initial.packId && PACKS.some((p) => p.id === initial.packId)
       ? initial.packId
@@ -25,10 +26,9 @@ export default function App() {
   );
   const [keycap, setKeycap] = useState<KeycapProfile>(initial.keycap ?? 'thick-pbt');
 
-  // Keep URL in sync.
   useEffect(() => {
-    writeBuildHash({ packId, keycap });
-  }, [packId, keycap]);
+    writeBuildHash({ boardType, packId, keycap });
+  }, [boardType, packId, keycap]);
 
   const pack = PACKS.find((p) => p.id === packId) ?? PACKS[0];
   const { ready } = useAudioEngine({ pack, layout: sixtyPercent, keycap });
@@ -37,7 +37,7 @@ export default function App() {
   return (
     <div className="relative h-full w-full">
       <Scene>
-        <Keyboard pressedKeys={pressedKeys} keycap={keycap} />
+        <Keyboard pressedKeys={pressedKeys} keycap={keycap} boardType={boardType} />
       </Scene>
 
       <header className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between px-6 py-4">
@@ -53,7 +53,14 @@ export default function App() {
       </header>
 
       <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3">
-        <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-neutral-500">
+        <div className="text-[11px] uppercase tracking-wider text-neutral-500">Board type</div>
+        <Segmented
+          options={BOARD_TYPE_OPTIONS.map((b) => ({ id: b, label: BOARD_CONFIG[b].name }))}
+          value={boardType}
+          onChange={(v) => setBoardType(v as BoardType)}
+        />
+
+        <div className="mt-2 flex items-center gap-2 text-[11px] uppercase tracking-wider text-neutral-500">
           <span>Switches</span>
           <span className={ready ? 'text-emerald-400' : 'text-amber-400'}>
             {ready ? '●' : '○'}
@@ -65,7 +72,7 @@ export default function App() {
           onChange={setPackId}
         />
 
-        <div className="mt-1 text-[11px] uppercase tracking-wider text-neutral-500">Keycaps</div>
+        <div className="mt-2 text-[11px] uppercase tracking-wider text-neutral-500">Keycaps</div>
         <Segmented
           options={KEYCAP_OPTIONS.map((k) => ({ id: k, label: KEYCAP_LABEL[k] }))}
           value={keycap}
@@ -111,7 +118,6 @@ function ShareButton() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      // Older browsers / no clipboard permission — fall through silently.
       window.prompt('Copy this link:', window.location.href);
     }
   };

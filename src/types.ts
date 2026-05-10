@@ -2,6 +2,8 @@ export type Zone = 'alpha' | 'space' | 'mod' | 'largekey';
 
 export type KeycapProfile = 'thin-abs' | 'thick-pbt' | 'tall-pbt';
 
+export type BoardType = 'flat' | 'low-profile' | 'mechanical';
+
 export interface KeyDef {
   code: string;     // KeyboardEvent.code, e.g. "KeyA", "Space"
   label: string;

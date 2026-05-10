@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, ContactShadows } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 
 interface SceneProps {
   children?: ReactNode;
@@ -31,14 +31,6 @@ export function Scene({ children }: SceneProps) {
       <directionalLight position={[-5, 4, -3]} intensity={0.25} />
 
       {children}
-
-      <ContactShadows
-        position={[0, -0.46, 0]}
-        opacity={0.55}
-        blur={2}
-        far={6}
-        resolution={512}
-      />
 
       <OrbitControls
         makeDefault
