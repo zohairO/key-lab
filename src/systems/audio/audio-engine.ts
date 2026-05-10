@@ -1,6 +1,7 @@
-import type { KeyDef } from '../../types';
+import type { KeyDef, PlateMaterial } from '../../types';
 import { packUrls, resolveSlice, type SoundPack } from './sound-pack';
-import { KEYCAP_EQ, type KeycapProfile } from './keycap-eq';
+import { KEYCAP_EQ, type FilterPreset, type KeycapProfile } from './keycap-eq';
+import { PLATE_EQ } from '../../data/plate-materials';
 
 const PITCH_JITTER = 0.02;       // ±2% playback rate randomization
 const ONSET_JITTER_MS = 5;       // ±5ms onset randomization
@@ -17,6 +18,7 @@ export class AudioEngine {
   private inflight = new Map<string, Promise<AudioBuffer>>();
   private pack: SoundPack;
   private keycap: KeycapProfile = 'thick-pbt';
+  private plate: PlateMaterial = 'aluminum';
   private masterGain: GainNode | null = null;
 
   constructor(pack: SoundPack) {
@@ -32,6 +34,10 @@ export class AudioEngine {
 
   setKeycap(profile: KeycapProfile) {
     this.keycap = profile;
+  }
+
+  setPlate(plate: PlateMaterial) {
+    this.plate = plate;
   }
 
   /** Lazy-init the context so we don't create one before user interaction. */
@@ -99,15 +105,17 @@ export class AudioEngine {
     src.buffer = buf;
     src.playbackRate.value = 1 + (Math.random() * 2 - 1) * PITCH_JITTER;
 
-    // EQ chain: src -> filter1 -> ... -> masterGain
-    const filters = KEYCAP_EQ[this.keycap].map((preset) => {
-      const f = ctx.createBiquadFilter();
-      f.type = preset.type;
-      f.frequency.value = preset.frequency;
-      if (preset.gain !== undefined) f.gain.value = preset.gain;
-      if (preset.Q !== undefined) f.Q.value = preset.Q;
-      return f;
-    });
+    // EQ chain: src -> keycap filters -> plate filters -> masterGain
+    const buildFilters = (presets: FilterPreset[]) =>
+      presets.map((preset) => {
+        const f = ctx.createBiquadFilter();
+        f.type = preset.type;
+        f.frequency.value = preset.frequency;
+        if (preset.gain !== undefined) f.gain.value = preset.gain;
+        if (preset.Q !== undefined) f.Q.value = preset.Q;
+        return f;
+      });
+    const filters = [...buildFilters(KEYCAP_EQ[this.keycap]), ...buildFilters(PLATE_EQ[this.plate])];
 
     let node: AudioNode = src;
     for (const f of filters) {

@@ -2,13 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { AudioEngine } from '../systems/audio/audio-engine';
 import type { SoundPack } from '../systems/audio/sound-pack';
 import type { KeycapProfile } from '../systems/audio/keycap-eq';
-import type { Layout } from '../types';
+import type { Layout, PlateMaterial } from '../types';
 import { buildCodeIndex } from '../lib/key-lookup';
 
 interface UseAudioEngineOptions {
   pack: SoundPack;
   layout: Layout;
   keycap: KeycapProfile;
+  plateMaterial: PlateMaterial;
   enabled?: boolean;
 }
 
@@ -16,7 +17,7 @@ interface UseAudioEngineOptions {
  * Owns a single AudioEngine instance. Wires keydown/keyup -> engine.play().
  * Skips autorepeat events (real keyboards don't make sound on autorepeat).
  */
-export function useAudioEngine({ pack, layout, keycap, enabled = true }: UseAudioEngineOptions) {
+export function useAudioEngine({ pack, layout, keycap, plateMaterial, enabled = true }: UseAudioEngineOptions) {
   const engineRef = useRef<AudioEngine | null>(null);
   if (!engineRef.current) engineRef.current = new AudioEngine(pack);
   const engine = engineRef.current;
@@ -43,6 +44,10 @@ export function useAudioEngine({ pack, layout, keycap, enabled = true }: UseAudi
   useEffect(() => {
     engine.setKeycap(keycap);
   }, [engine, keycap]);
+
+  useEffect(() => {
+    engine.setPlate(plateMaterial);
+  }, [engine, plateMaterial]);
 
   // Keyboard input listener
   useEffect(() => {

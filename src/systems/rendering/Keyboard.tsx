@@ -2,19 +2,22 @@ import { ContactShadows, RoundedBox } from '@react-three/drei';
 import { sixtyPercent } from '../../data/sixty-percent';
 import { KEYCAP_VISUAL } from '../../data/keycap-profiles';
 import { BOARD_CONFIG } from '../../data/board-types';
-import type { BoardType, KeycapProfile } from '../../types';
+import { PLATE_VISUAL } from '../../data/plate-materials';
+import type { BoardType, KeycapProfile, PlateMaterial } from '../../types';
 import { Keycap } from './Keycap';
 
 interface KeyboardProps {
   pressedKeys: Set<string>;
   keycap: KeycapProfile;
   boardType: BoardType;
+  plateMaterial: PlateMaterial;
 }
 
-export function Keyboard({ pressedKeys, keycap, boardType }: KeyboardProps) {
+export function Keyboard({ pressedKeys, keycap, boardType, plateMaterial }: KeyboardProps) {
   const layout = sixtyPercent;
   const visual = KEYCAP_VISUAL[keycap];
   const board = BOARD_CONFIG[boardType];
+  const plate = PLATE_VISUAL[plateMaterial];
 
   const keycapHeight = board.keycapHeightOverride ?? visual.height;
 
@@ -64,7 +67,11 @@ export function Keyboard({ pressedKeys, keycap, boardType }: KeyboardProps) {
           receiveShadow
         >
           <boxGeometry args={[plateW, board.plateHeight, plateD]} />
-          <meshStandardMaterial color={board.plateColor} roughness={0.45} metalness={0.4} />
+          <meshStandardMaterial
+            color={plate.color}
+            roughness={plate.roughness}
+            metalness={plate.metalness}
+          />
         </mesh>
       )}
 
