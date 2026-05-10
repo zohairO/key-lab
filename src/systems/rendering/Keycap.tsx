@@ -82,9 +82,10 @@ export const Keycap = memo(function Keycap({
       </mesh>
       {label && (
         <Text
-          position={[0, height / 2 - dishDepth + 0.002, 0]}
+          font="/fonts/Inter-Regular.woff"
+          position={[0, height / 2 + 0.005, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
-          fontSize={Math.min(0.22, width * 0.32, depth * 0.45)}
+          fontSize={Math.min(0.26, width * 0.36, depth * 0.5)}
           color={labelColor}
           anchorX="center"
           anchorY="middle"
