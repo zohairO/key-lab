@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Scene } from './systems/rendering/Scene';
+import { Keyboard } from './systems/rendering/Keyboard';
 import { sixtyPercent } from './data/sixty-percent';
 import { holyPandas } from './data/sound-packs/holy-pandas';
 import { cherryMxBrownPbt } from './data/sound-packs/cherrymx-brown-pbt';
 import { cherryMxBluePbt } from './data/sound-packs/cherrymx-blue-pbt';
 import { KEYCAP_LABEL, type KeycapProfile } from './systems/audio/keycap-eq';
 import { useAudioEngine } from './hooks/useAudioEngine';
+import { usePressedKeys } from './hooks/usePressedKeys';
 import type { SoundPack } from './systems/audio/sound-pack';
 
 const PACKS: SoundPack[] = [cherryMxBrownPbt, holyPandas, cherryMxBluePbt];
@@ -17,15 +19,18 @@ export default function App() {
 
   const pack = PACKS.find((p) => p.id === packId) ?? PACKS[0];
   const { ready } = useAudioEngine({ pack, layout: sixtyPercent, keycap });
+  const pressedKeys = usePressedKeys();
 
   return (
     <div className="relative h-full w-full">
-      <Scene />
+      <Scene>
+        <Keyboard pressedKeys={pressedKeys} />
+      </Scene>
 
       <header className="pointer-events-none absolute inset-x-0 top-0 px-6 py-4">
         <h1 className="text-xl font-semibold tracking-tight">KeyboardLab</h1>
         <p className="text-xs text-neutral-400">
-          drag to rotate · scroll to zoom · type to hear it
+          drag to rotate · scroll to zoom · type to hear and see it
         </p>
       </header>
 

@@ -2,17 +2,21 @@ import { RoundedBox } from '@react-three/drei';
 import { sixtyPercent } from '../../data/sixty-percent';
 import { Keycap } from './Keycap';
 
-const KEY_GAP = 0.06;       // gap between keys, in scene units (1u = 1)
+const KEY_GAP = 0.06;
 const KEY_HEIGHT = 0.5;
 const CASE_HEIGHT = 0.45;
-const CASE_PADDING = 0.4;   // padding around the key field, in units
+const CASE_PADDING = 0.4;
 
 const CASE_COLOR = '#141417';
 
-export function Keyboard() {
+interface KeyboardProps {
+  pressedKeys: Set<string>;
+}
+
+export function Keyboard({ pressedKeys }: KeyboardProps) {
   const layout = sixtyPercent;
 
-  // Center the key field on the origin (XZ plane). Row 0 = back (-Z), row N = front (+Z).
+  // Center the key field on the origin (XZ plane). Row 0 = back (-Z).
   const offsetX = -layout.width / 2;
   const offsetZ = -layout.height / 2;
 
@@ -36,17 +40,21 @@ export function Keyboard() {
       {/* Keycaps */}
       {layout.keys.map((k) => {
         const cx = offsetX + k.x + k.w / 2;
+        const cy = KEY_HEIGHT / 2;
         const cz = offsetZ + k.y + 0.5;
         const w = k.w - KEY_GAP;
         const d = 1 - KEY_GAP;
         return (
           <Keycap
             key={`${k.code}-${k.x}-${k.y}`}
-            position={[cx, KEY_HEIGHT / 2, cz]}
+            cx={cx}
+            cy={cy}
+            cz={cz}
             width={w}
             depth={d}
             height={KEY_HEIGHT}
             label={k.label}
+            pressed={pressedKeys.has(k.code)}
           />
         );
       })}
