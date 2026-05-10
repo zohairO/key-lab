@@ -40,23 +40,35 @@ Visual target: **stylized but recognizable**, not photoreal. Photorealism is an 
 
 ## Decisions: sound strategy
 
+Sound is layered: **switch defines the sample, keycap shapes the sample via EQ.**
+
 | Path | What it is | v0 fit | Status |
 |---|---|---|---|
-| **A. Sample-based** | Record/source real keyboard audio, segment per zone (alpha, space, tab, mods), play on keydown with small randomization (pitch ±2%, timing ±5ms) to avoid the "machine-gun" effect. | Authentic out of the box. Sourcing from YouTube videos that test keyboards is realistic. | **CHOSEN for v0 (2026-05-09).** |
-| B. Pure synthesis (Tone.js) | Generate sound from parameters (thockiness, sharpness, resonance). | Hard to make sound *real*. Better as a layer on top of samples. | Deferred. |
-| C. Hybrid | Samples as base, params apply EQ/reverb/pitch on top. | Power-user direction. | Phase 2. |
+| **A. Sample-based per switch + EQ-modifier per keycap** | 12 base sample sets (3 switches × 4 zones). Each keycap profile applies a Web Audio `BiquadFilterNode` curve on top to bias bright/neutral/deep. | Authentic, sourceable, keeps sample count tractable. EQ is acoustically honest — keycap mostly shapes high-frequency content. | **CHOSEN for v0 (2026-05-10).** |
+| B. Combinatorial samples (switch × keycap) | 36 sample sets (3 switches × 3 keycaps × 4 zones). Most authentic. | 3× sourcing burden, prohibitive for v0. | Rejected for v0. Optional Phase 2 upgrade for hero boards. |
+| C. Pure synthesis (Tone.js) | Generate sound from parameters. | Hard to make sound *real*. | Deferred. |
 
-**Per-zone mapping (v0 minimum):** alphas, spacebar, tab/enter/backspace, modifiers. One sample set per zone per keyboard.
+**Per-zone mapping (v0 minimum):** alphas, spacebar, tab/enter/backspace, modifiers. One sample set per zone *per switch* (not per keycap).
+
+**Keycap as EQ:** each of the 3 keycap profiles maps to a `BiquadFilterNode` config:
+
+- **Thin ABS (bright/clacky):** highshelf +3–5dB at ~4kHz, slight peak at ~6kHz
+- **Thick PBT (neutral/thocky):** lowshelf +2dB at ~200Hz, highshelf -3dB at ~5kHz
+- **Thick PBT tall profile (deep/vintage thock):** lowshelf +4dB at ~150Hz, highshelf -6dB at ~5kHz, gentle lowpass cutoff ~8kHz
+
+Tune by ear once we have real samples. The numbers above are starting points.
 
 **Anti-machine-gun:** randomize pitch ±2% and onset ±5ms; rotate through 3–5 sample variants per zone if available.
+
+**Web Audio only.** `BiquadFilterNode` is native; no Tone.js dependency yet. Tone.js still deferred to Phase 2 if/when reverb or convolution is needed.
 
 ## v0 "done" criteria
 
 The bar for v0 being shippable as a "whoa" demo:
 
 1. One procedural keyboard renders in 3D, rotatable and zoomable.
-2. User can swap **switches** (3 options) — sound changes live.
-3. User can swap **keycaps** (3 options) — visuals change live.
+2. User can swap **switches** (3 options) — base sample changes live.
+3. User can swap **keycaps** (3 material/profile options) — visuals change live AND sound shifts via EQ filter (bright / neutral / deep).
 4. Typing on the physical keyboard plays the right per-zone sound for the current build.
 5. Build state lives in the URL and is shareable as a link.
 

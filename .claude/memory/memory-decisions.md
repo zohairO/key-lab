@@ -4,6 +4,11 @@ Date-stamped architectural and product decisions. Most recent at top.
 
 ---
 
+## 2026-05-10
+
+- **Keycap sound = EQ modifier, not separate samples.** v0 has 3 keycap slots (thin ABS / thick PBT Cherry / thick PBT tall profile). Each maps to a `BiquadFilterNode` curve applied on top of the switch sample at playback. **Why:** combinatorial samples (3 switches × 3 keycaps × 4 zones = 36 sets) triples the sourcing burden for marginal authenticity gain; in real boards, keycap mostly shapes high-frequency content, which an EQ filter approximates honestly. **How to apply:** sample count for v0 stays at 12 (3 switches × 4 zones × ~3 variants). Don't source per-keycap recordings. EQ presets live in code, tuned by ear once real samples land. `BiquadFilterNode` is native Web Audio — no Tone.js dependency.
+- **Keycap slots framed by sound character, not color.** v0 keycap options are: thin ABS (bright/clacky), thick PBT Cherry (neutral/thocky), thick PBT SA/MT3 (deep/vintage thock). **Why:** swap demo lands harder if the 3 options sound clearly different — color-only swaps don't change audio. **How to apply:** when the user picks keycaps in the builder UI, the choice changes both the visual material and the EQ curve.
+
 ## 2026-05-09
 
 - **Project name: KeyboardLab.** Project root: `/Users/zohairoomatia/Desktop/projects/key-lab`.

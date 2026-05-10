@@ -4,6 +4,8 @@
 
 Get **3 switch sound profiles** × **4 zones** = **12 sample sets** for v0. Each sample set should ideally have 3–5 short variants (50–150ms WAVs) to randomize between, so typing fast doesn't sound like a machine gun.
 
+> **Keycaps are NOT sampled separately.** The 3 keycap options (thin ABS / thick PBT / tall PBT) are applied as a real-time Web Audio EQ curve on top of the switch sample. No keycap recordings needed. See `.claude/rules/architecture.md` § "Decisions: sound strategy" for the EQ presets.
+
 ## The 3 switches (v0)
 
 We pick three that sound *clearly different* from each other so the demo's "switch swap" moment is obvious. Recommended:
@@ -89,6 +91,20 @@ Switch IDs in code will match the folder names: `cherry-brown`, `thock`, `blue-c
 1. **Write a download script** that pulls a known Mechvibes pack and reorganizes it into our folder structure. Just need the pack URL.
 2. **Write an Audacity macro / ffmpeg one-liner** to batch-trim and normalize a folder of raw WAVs.
 3. **Build a sample preview page** in the app early so you can audition each sample as you drop it in.
+
+## What about the 3 keycap sets?
+
+You don't source audio for keycaps — they are applied as an EQ filter on top of the switch sample at playback time.
+
+The 3 v0 keycap options are sound-driven:
+
+| Slot | Keycap type | EQ character |
+|------|-------------|--------------|
+| 1 | Thin ABS, Cherry profile | Bright, clacky — boost ~4–6 kHz |
+| 2 | Thick PBT, Cherry profile | Neutral/thocky — gentle bass boost, mild high cut |
+| 3 | Thick PBT, tall profile (SA / MT3) | Deep, vintage thock — bass boost, stronger high cut, lowpass ~8 kHz |
+
+Implementation will use `BiquadFilterNode` (native Web Audio). No samples to source. Visual differences (color/profile) will be procedural in 3D.
 
 ## Order of operations (suggested)
 
