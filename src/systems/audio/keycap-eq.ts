@@ -1,4 +1,6 @@
-export type KeycapProfile = 'thin-abs' | 'thick-pbt' | 'tall-pbt';
+import type { KeycapProfile } from '../../types';
+
+export type { KeycapProfile };
 
 export interface FilterPreset {
   type: BiquadFilterType;
@@ -27,10 +29,4 @@ export const KEYCAP_EQ: Record<KeycapProfile, FilterPreset[]> = {
     { type: 'highshelf', frequency: 5000, gain: -6 },
     { type: 'lowpass', frequency: 8000 },
   ],
-};
-
-export const KEYCAP_LABEL: Record<KeycapProfile, string> = {
-  'thin-abs': 'Thin ABS',
-  'thick-pbt': 'Thick PBT',
-  'tall-pbt': 'Tall PBT (SA)',
 };

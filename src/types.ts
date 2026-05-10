@@ -1,5 +1,7 @@
 export type Zone = 'alpha' | 'space' | 'mod' | 'largekey';
 
+export type KeycapProfile = 'thin-abs' | 'thick-pbt' | 'tall-pbt';
+
 export interface KeyDef {
   code: string;     // KeyboardEvent.code, e.g. "KeyA", "Space"
   label: string;

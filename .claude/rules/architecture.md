@@ -73,10 +73,12 @@ Tune by ear once we have real samples. The numbers above are starting points.
 The bar for v0 being shippable as a "whoa" demo:
 
 1. One procedural keyboard renders in 3D, rotatable and zoomable.
-2. User can swap **switches** (3 options) — base sample changes live.
-3. User can swap **keycaps** (3 material/profile options) — visuals change live AND sound shifts via EQ filter (bright / neutral / deep).
-4. Typing on the physical keyboard plays the right per-zone sound for the current build.
-5. Build state lives in the URL and is shareable as a link.
+2. User can swap **switches** (3 options) — base sample changes live. ✅
+3. User can swap **keycaps** (3 material/profile options) — color, label color, and height change visually; sound shifts via EQ filter. ✅
+4. Typing on the physical keyboard plays the right per-key sound for the current build, and the matching keycap dips/glows in 3D. ✅
+5. Build state (`packId`, `keycap`) lives in the URL hash, hydrated on load, written on change. Share button copies the URL to clipboard. ✅
+
+**v0 SHIPPED 2026-05-10.** Move on to v0.5 (more layouts, more packs, more keycap profiles) or Phase 2 (catalog, auth, saved builds).
 
 Explicitly **deferred**:
 
