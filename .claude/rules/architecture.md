@@ -48,7 +48,13 @@ Sound is layered: **switch defines the sample, keycap shapes the sample via EQ.*
 | B. Combinatorial samples (switch × keycap) | 36 sample sets (3 switches × 3 keycaps × 4 zones). Most authentic. | 3× sourcing burden, prohibitive for v0. | Rejected for v0. Optional Phase 2 upgrade for hero boards. |
 | C. Pure synthesis (Tone.js) | Generate sound from parameters. | Hard to make sound *real*. | Deferred. |
 
-**Per-zone mapping (v0 minimum):** alphas, spacebar, tab/enter/backspace, modifiers. One sample set per zone *per switch* (not per keycap).
+**Pack formats supported:**
+- `multi-file` — kbsim/Holy Pandas style: one MP3 per keyboard row + per-key overrides for Space/Enter/Backspace.
+- `sprite` — Mechvibes single-file style: one OGG/MP3 + a JSON map of `[offsetMs, durationMs]` per scancode. We translate iohook scancodes to `KeyboardEvent.code` at pack-build time (`src/systems/audio/mechvibes.ts`).
+
+The audio engine resolves both via `resolveSlice(pack, key)` so the playback path is uniform. `KeyDef.zone` is still useful for builder UI grouping; for *audio*, sprite packs key off `event.code` directly and multi-file packs key off row index (`KeyDef.y`) with code-keyed overrides.
+
+**Per-key resolution:** sprite packs are per-key by construction. Multi-file packs are per-row + special-key overrides (more accurate than the original four-zone plan — real recordings differ row-to-row because of keycap tilt and stab).
 
 **Keycap as EQ:** each of the 3 keycap profiles maps to a `BiquadFilterNode` config:
 
