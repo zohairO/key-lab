@@ -2,13 +2,19 @@ import { ContactShadows, RoundedBox } from '@react-three/drei';
 import { KEYCAP_VISUAL } from '../../data/keycap-profiles';
 import { BOARD_CONFIG } from '../../data/board-types';
 import { PLATE_VISUAL } from '../../data/plate-materials';
-import type { BoardType, KeycapProfile, Layout, PlateMaterial } from '../../types';
+import type { BoardType, KeycapProfile, Layout, PlateMaterial, Zone } from '../../types';
 import { Keycap } from './Keycap';
 
 export interface KeyboardVisualOverrides {
   caseColor?: string;
+  /** Default cap color — used when no zone or key override matches. */
   capColor?: string;
+  /** Default label color. */
   labelColor?: string;
+  /** Per-zone overrides — applied to all keys in that zone (e.g. 'mod' = dark). */
+  zoneColors?: Partial<Record<Zone, { cap?: string; label?: string }>>;
+  /** Per-KeyboardEvent.code overrides — highest priority, e.g. Esc = orange. */
+  keyColors?: Record<string, { cap?: string; label?: string }>;
 }
 
 interface KeyboardProps {
@@ -93,6 +99,13 @@ export function Keyboard({
         const czPos = offsetZ + k.y + 0.5;
         const w = k.w - board.keyGap;
         const d = 1 - board.keyGap;
+
+        // Resolution order: key-specific > zone-specific > default
+        const keyOverride = overrides?.keyColors?.[k.code];
+        const zoneOverride = overrides?.zoneColors?.[k.zone];
+        const finalCapColor = keyOverride?.cap ?? zoneOverride?.cap ?? capColor;
+        const finalLabelColor = keyOverride?.label ?? zoneOverride?.label ?? labelColor;
+
         return (
           <Keycap
             key={`${k.code}-${k.x}-${k.y}`}
@@ -108,8 +121,8 @@ export function Keyboard({
             topSegments={board.keycapTopSegments}
             label={k.label}
             pressed={pressedKeys.has(k.code)}
-            capColor={capColor}
-            labelColor={labelColor}
+            capColor={finalCapColor}
+            labelColor={finalLabelColor}
           />
         );
       })}

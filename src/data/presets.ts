@@ -4,6 +4,7 @@ import type {
   KeycapProfile,
   LayoutFamily,
   PlateMaterial,
+  Zone,
 } from '../types';
 
 export interface Preset {
@@ -23,6 +24,10 @@ export interface Preset {
     caseColorOverride?: string;
     capColorOverride?: string;
     labelColorOverride?: string;
+    /** Per-zone color overrides — e.g. K2 has dark mods + cream alphas. */
+    zoneColors?: Partial<Record<Zone, { cap?: string; label?: string }>>;
+    /** Per-key overrides — e.g. orange Esc on K2. */
+    keyColors?: Record<string, { cap?: string; label?: string }>;
   };
   /** Notes on remaining authenticity gaps (visual or audio). */
   authenticityNotes?: string;
@@ -57,8 +62,8 @@ export const PRESETS: Preset[] = [
   },
   {
     id: 'keychron-k2',
-    name: 'Keychron K2 Pro / Brown',
-    description: 'Stock K2 Pro — dark aluminum case, cream PBT caps',
+    name: 'Keychron K2 / Brown',
+    description: 'Two-tone PBT caps, dark aluminum frame, orange Esc accent',
     build: {
       boardType: 'mechanical',
       packId: 'cherrymx-brown-pbt',
@@ -66,13 +71,26 @@ export const PRESETS: Preset[] = [
       plateMaterial: 'fr4',
       layoutFamily: 'sixty-five-percent',
       keyboardStyle: 'windows',
-      // K2 Pro authentic colorway
-      caseColorOverride: '#3a3d42',   // dark gray aluminum top frame
-      capColorOverride: '#dcd8c8',    // cream PBT
-      labelColorOverride: '#3a3a3a',  // dark legends
+      // K2 authentic colorway — two-tone PBT on dark aluminum
+      caseColorOverride: '#1d1f23',     // near-black aluminum frame
+      capColorOverride: '#e8e4d8',      // cream alphas (default)
+      labelColorOverride: '#2a2d33',    // dark legends on cream
+      zoneColors: {
+        // Mods + large keys (Tab/Caps/Shift/Enter/Backspace/Ctrl/Win/Alt/nav cluster)
+        // are charcoal grey with light legends.
+        mod: { cap: '#3d4045', label: '#dcdcdc' },
+        largekey: { cap: '#3d4045', label: '#dcdcdc' },
+        // Spacebar stays the cream default — matches the real K2.
+      },
+      keyColors: {
+        // K2's signature orange Esc accent. In 65% we don't have a dedicated
+        // Esc key (Esc lives behind Fn+`), so the orange sits on Backquote
+        // (top-left corner) until 75% lands and gives us a real Esc row.
+        Backquote: { cap: '#ff6b3d', label: '#ffffff' },
+      },
     },
     authenticityNotes:
-      'Closest preset to authentic. Gaps: real K2 is 75% (currently rendered as 65% until 75% layout lands), real caps are two-tone (cream alphas + dark mods — currently single tone), audio is generic Cherry Brown rather than a K2-specific recording.',
+      'Real K2 is 75% (F-row across the top). Currently rendered as 65%, so the F-row is missing and the orange accent sits on ` instead of Esc. Two-tone caps and dark aluminum frame are accurate. Audio is still generic Cherry Brown — a K2-specific recording would close the last gap.',
   },
   {
     id: 'gmmk-pro-pandas',

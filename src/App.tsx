@@ -91,6 +91,8 @@ export default function App() {
         caseColor: matchingPreset.build.caseColorOverride,
         capColor: matchingPreset.build.capColorOverride,
         labelColor: matchingPreset.build.labelColorOverride,
+        zoneColors: matchingPreset.build.zoneColors,
+        keyColors: matchingPreset.build.keyColors,
       }
     : undefined;
 
