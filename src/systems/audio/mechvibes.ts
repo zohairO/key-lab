@@ -30,12 +30,41 @@ const IOHOOK_TO_CODE: Record<number, string> = {
   59: 'F1', 60: 'F2', 61: 'F3', 62: 'F4', 63: 'F5', 64: 'F6',
   65: 'F7', 66: 'F8', 67: 'F9', 68: 'F10',
   87: 'F11', 88: 'F12',
-  // Extended (E0-prefixed) keys, encoded by Mechvibes as 3000+
-  3613: 'ControlRight',
-  3640: 'AltRight',
-  3675: 'MetaLeft',
-  3676: 'MetaRight',
-  3677: 'ContextMenu',
+  // Extended keys, "14*256 + scancode" encoding (3584+)
+  3613: 'ControlRight',     // 0x1D
+  3640: 'AltRight',         // 0x38
+  3653: 'NumLock',          // 0x45
+  3655: 'Home',             // 0x47
+  3657: 'PageUp',           // 0x49
+  3663: 'End',              // 0x4F
+  3665: 'PageDown',         // 0x51
+  3666: 'Insert',           // 0x52
+  3667: 'Delete',           // 0x53
+  3675: 'MetaLeft',         // 0x5B
+  3676: 'MetaRight',        // 0x5C
+  3677: 'ContextMenu',      // 0x5D
+  // 0xE000 + scancode encoding (57344+)
+  57415: 'Home',
+  57416: 'ArrowUp',
+  57417: 'PageUp',
+  57419: 'ArrowLeft',
+  57421: 'ArrowRight',
+  57423: 'End',
+  57424: 'ArrowDown',
+  57425: 'PageDown',
+  57426: 'Insert',
+  57427: 'Delete',
+  // 0xEE00 + scancode encoding (alternate, 60928+)
+  60999: 'Home',
+  61000: 'ArrowUp',
+  61001: 'PageUp',
+  61003: 'ArrowLeft',
+  61005: 'ArrowRight',
+  61007: 'End',
+  61008: 'ArrowDown',
+  61009: 'PageDown',
+  61010: 'Insert',
+  61011: 'Delete',
 };
 
 /** Source-of-truth shape for raw Mechvibes config.json files. */
