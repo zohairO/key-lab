@@ -1,14 +1,11 @@
 import { buildLayout, type RowEntry } from './build-layout';
+import { applyMacLabels } from './relabel';
 
 /**
- * Tofu65-style 65% ANSI layout: 60% + one extra column on the right
- * with nav cluster (Del/Home/PgUp/PgDn/End) and an integrated arrow
- * cluster across the bottom two rows.
- *
- * Each row sums to 16u. Right-shift drops from 2.75u → 1.75u and the
- * bottom row swaps the right-modifier cluster for arrows to make room.
+ * Tofu65-style 65% ANSI. 16u wide. Adds Del/Home/PgUp/PgDn right column +
+ * integrated arrow cluster across the bottom two rows.
  */
-const ROWS: RowEntry[][] = [
+const TOP_ROWS: RowEntry[][] = [
   // row 0: number row + Del
   [
     [1, 'Backquote', '`'],
@@ -36,7 +33,7 @@ const ROWS: RowEntry[][] = [
     [2.25, 'Enter', 'Enter', 'largekey'],
     [1, 'PageUp', 'PgUp', 'largekey'],
   ],
-  // row 3: shift row + Up + PgDn (RShift shortened to 1.75)
+  // row 3: shift row + Up + PgDn
   [
     [2.25, 'ShiftLeft', 'Shift', 'mod'],
     [1, 'KeyZ', 'Z'], [1, 'KeyX', 'X'], [1, 'KeyC', 'C'], [1, 'KeyV', 'V'], [1, 'KeyB', 'B'],
@@ -46,22 +43,41 @@ const ROWS: RowEntry[][] = [
     [1, 'ArrowUp', '↑'],
     [1, 'PageDown', 'PgDn', 'largekey'],
   ],
-  // row 4: bottom row with arrows replacing the right-side modifier cluster
-  [
-    [1.5, 'ControlLeft', 'Ctrl', 'mod'],
-    [1.25, 'MetaLeft', 'Win', 'mod'],
-    [1.25, 'AltLeft', 'Alt', 'mod'],
-    [6.25, 'Space', '', 'space'],
-    [1.25, 'AltRight', 'Alt', 'mod'],
-    [1.5, 'ContextMenu', 'Fn', 'mod'],
-    [1, 'ArrowLeft', '←'],
-    [1, 'ArrowDown', '↓'],
-    [1, 'ArrowRight', '→'],
-  ],
 ];
 
-export const sixtyFivePercent = buildLayout({
-  id: 'sixty-five-percent',
+const BOTTOM_WIN: RowEntry[] = [
+  [1.5, 'ControlLeft', 'Ctrl', 'mod'],
+  [1.25, 'MetaLeft', 'Win', 'mod'],
+  [1.25, 'AltLeft', 'Alt', 'mod'],
+  [6.25, 'Space', '', 'space'],
+  [1.25, 'AltRight', 'Alt', 'mod'],
+  [1.5, 'ContextMenu', 'Fn', 'mod'],
+  [1, 'ArrowLeft', '←'],
+  [1, 'ArrowDown', '↓'],
+  [1, 'ArrowRight', '→'],
+];
+
+const BOTTOM_MAC: RowEntry[] = [
+  [1.0, 'ContextMenu', 'fn', 'mod'],
+  [1.0, 'ControlLeft', '⌃', 'mod'],
+  [1.0, 'AltLeft', '⌥', 'mod'],
+  [1.25, 'MetaLeft', '⌘', 'mod'],
+  [6.25, 'Space', '', 'space'],
+  [1.25, 'MetaRight', '⌘', 'mod'],
+  [1.25, 'AltRight', '⌥', 'mod'],
+  [1, 'ArrowLeft', '←'],
+  [1, 'ArrowDown', '↓'],
+  [1, 'ArrowRight', '→'],
+];
+
+export const sixtyFivePercentWin = buildLayout({
+  id: 'sixty-five-percent-windows',
   name: '65% ANSI',
-  rows: ROWS,
+  rows: [...TOP_ROWS, BOTTOM_WIN],
+});
+
+export const sixtyFivePercentMac = buildLayout({
+  id: 'sixty-five-percent-mac',
+  name: '65% ANSI',
+  rows: [...applyMacLabels(TOP_ROWS), BOTTOM_MAC],
 });

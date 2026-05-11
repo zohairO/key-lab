@@ -1,4 +1,10 @@
-import type { BoardType, KeycapProfile, PlateMaterial } from '../types';
+import type {
+  BoardType,
+  KeyboardStyle,
+  KeycapProfile,
+  LayoutFamily,
+  PlateMaterial,
+} from '../types';
 
 export interface Preset {
   id: string;
@@ -9,18 +15,11 @@ export interface Preset {
     packId: string;
     keycap: KeycapProfile;
     plateMaterial: PlateMaterial;
-    layoutId: string;
+    layoutFamily: LayoutFamily;
+    keyboardStyle: KeyboardStyle;
   };
 }
 
-/**
- * Curated starter builds. Click one and the whole rig reconfigures.
- * Real "browse mode" with photos / search / affiliate links is Phase 2;
- * these are the v0.5 shortcut so users can jump straight to a known sound.
- *
- * Note: still approximations until per-keyboard authentic recordings land.
- * Layouts are best-effort given what we currently support (60% / 65%).
- */
 export const PRESETS: Preset[] = [
   {
     id: 'magic-keyboard',
@@ -31,7 +30,8 @@ export const PRESETS: Preset[] = [
       packId: 'cherrymx-brown-pbt',
       keycap: 'thin-abs',
       plateMaterial: 'aluminum',
-      layoutId: 'sixty-five-percent',
+      layoutFamily: 'sixty-five-percent',
+      keyboardStyle: 'mac',
     },
   },
   {
@@ -43,7 +43,8 @@ export const PRESETS: Preset[] = [
       packId: 'cherrymx-brown-pbt',
       keycap: 'thin-abs',
       plateMaterial: 'polycarbonate',
-      layoutId: 'sixty-five-percent',
+      layoutFamily: 'sixty-five-percent',
+      keyboardStyle: 'mac',
     },
   },
   {
@@ -55,7 +56,8 @@ export const PRESETS: Preset[] = [
       packId: 'cherrymx-brown-pbt',
       keycap: 'thick-pbt',
       plateMaterial: 'fr4',
-      layoutId: 'sixty-five-percent',
+      layoutFamily: 'sixty-five-percent',
+      keyboardStyle: 'windows',
     },
   },
   {
@@ -67,7 +69,8 @@ export const PRESETS: Preset[] = [
       packId: 'holy-pandas',
       keycap: 'thick-pbt',
       plateMaterial: 'aluminum',
-      layoutId: 'sixty-five-percent',
+      layoutFamily: 'sixty-five-percent',
+      keyboardStyle: 'windows',
     },
   },
   {
@@ -79,7 +82,8 @@ export const PRESETS: Preset[] = [
       packId: 'cherrymx-blue-pbt',
       keycap: 'thick-pbt',
       plateMaterial: 'fr4',
-      layoutId: 'sixty-percent',
+      layoutFamily: 'sixty-percent',
+      keyboardStyle: 'windows',
     },
   },
   {
@@ -91,7 +95,8 @@ export const PRESETS: Preset[] = [
       packId: 'holy-pandas',
       keycap: 'tall-pbt',
       plateMaterial: 'brass',
-      layoutId: 'sixty-percent',
+      layoutFamily: 'sixty-percent',
+      keyboardStyle: 'windows',
     },
   },
 ];

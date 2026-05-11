@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Scene } from './systems/rendering/Scene';
 import { Keyboard } from './systems/rendering/Keyboard';
-import { LAYOUTS, DEFAULT_LAYOUT_ID, getLayout } from './data/layouts';
+import {
+  DEFAULT_KEYBOARD_STYLE,
+  DEFAULT_LAYOUT_FAMILY,
+  KEYBOARD_STYLES,
+  LAYOUT_FAMILIES,
+  resolveLayout,
+} from './data/layouts';
 import { holyPandas } from './data/sound-packs/holy-pandas';
 import { cherryMxBrownPbt } from './data/sound-packs/cherrymx-brown-pbt';
 import { cherryMxBluePbt } from './data/sound-packs/cherrymx-blue-pbt';
@@ -9,7 +15,7 @@ import { KEYCAP_LABEL, KEYCAP_VISUAL } from './data/keycap-profiles';
 import { BOARD_CONFIG, BOARD_TYPE_OPTIONS } from './data/board-types';
 import { PLATE_OPTIONS, PLATE_VISUAL } from './data/plate-materials';
 import { PRESETS } from './data/presets';
-import type { BoardType, KeycapProfile, PlateMaterial } from './types';
+import type { BoardType, KeyboardStyle, KeycapProfile, LayoutFamily, PlateMaterial, Theme } from './types';
 import { useAudioEngine } from './hooks/useAudioEngine';
 import { usePressedKeys } from './hooks/usePressedKeys';
 import { readBuildHash, writeBuildHash, type BuildState } from './lib/url-state';
@@ -26,7 +32,9 @@ const DEFAULTS: BuildState = {
   packId: cherryMxBrownPbt.id,
   keycap: 'thick-pbt',
   plateMaterial: 'aluminum',
-  layoutId: DEFAULT_LAYOUT_ID,
+  layoutFamily: DEFAULT_LAYOUT_FAMILY,
+  keyboardStyle: DEFAULT_KEYBOARD_STYLE,
+  theme: 'dark',
 };
 
 export default function App() {
@@ -39,19 +47,28 @@ export default function App() {
   const [plateMaterial, setPlateMaterial] = useState<PlateMaterial>(
     initial.plateMaterial ?? DEFAULTS.plateMaterial,
   );
-  const [layoutId, setLayoutId] = useState<string>(
-    initial.layoutId && LAYOUTS.some((l) => l.id === initial.layoutId)
-      ? initial.layoutId
-      : DEFAULTS.layoutId,
+  const [layoutFamily, setLayoutFamily] = useState<LayoutFamily>(
+    initial.layoutFamily ?? DEFAULTS.layoutFamily,
   );
+  const [keyboardStyle, setKeyboardStyle] = useState<KeyboardStyle>(
+    initial.keyboardStyle ?? DEFAULTS.keyboardStyle,
+  );
+  const [theme, setTheme] = useState<Theme>(initial.theme ?? DEFAULTS.theme);
   const [panelOpen, setPanelOpen] = useState(true);
 
-  const layout = getLayout(layoutId);
+  const layout = resolveLayout(layoutFamily, keyboardStyle);
   const pack = PACKS.find((p) => p.id === packId) ?? PACKS[0];
 
+  // Sync theme class onto <html>
   useEffect(() => {
-    writeBuildHash({ boardType, packId, keycap, plateMaterial, layoutId });
-  }, [boardType, packId, keycap, plateMaterial, layoutId]);
+    const root = document.documentElement;
+    if (theme === 'dark') root.classList.add('dark');
+    else root.classList.remove('dark');
+  }, [theme]);
+
+  useEffect(() => {
+    writeBuildHash({ boardType, packId, keycap, plateMaterial, layoutFamily, keyboardStyle, theme });
+  }, [boardType, packId, keycap, plateMaterial, layoutFamily, keyboardStyle, theme]);
 
   const { ready } = useAudioEngine({ pack, layout, keycap, plateMaterial });
   const pressedKeys = usePressedKeys();
@@ -62,7 +79,8 @@ export default function App() {
       p.build.packId === packId &&
       p.build.keycap === keycap &&
       p.build.plateMaterial === plateMaterial &&
-      p.build.layoutId === layoutId,
+      p.build.layoutFamily === layoutFamily &&
+      p.build.keyboardStyle === keyboardStyle,
   );
 
   const applyPreset = (id: string) => {
@@ -72,7 +90,8 @@ export default function App() {
     setPackId(preset.build.packId);
     setKeycap(preset.build.keycap);
     setPlateMaterial(preset.build.plateMaterial);
-    setLayoutId(preset.build.layoutId);
+    setLayoutFamily(preset.build.layoutFamily);
+    setKeyboardStyle(preset.build.keyboardStyle);
   };
 
   const reset = () => {
@@ -80,12 +99,15 @@ export default function App() {
     setPackId(DEFAULTS.packId);
     setKeycap(DEFAULTS.keycap);
     setPlateMaterial(DEFAULTS.plateMaterial);
-    setLayoutId(DEFAULTS.layoutId);
+    setLayoutFamily(DEFAULTS.layoutFamily);
+    setKeyboardStyle(DEFAULTS.keyboardStyle);
   };
+
+  const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
 
   return (
     <div className="relative h-full w-full">
-      <Scene>
+      <Scene theme={theme}>
         <Keyboard
           pressedKeys={pressedKeys}
           keycap={keycap}
@@ -98,8 +120,10 @@ export default function App() {
       <header className="pointer-events-none absolute right-0 top-0 flex items-start justify-end px-4 py-4">
         <div className="pointer-events-auto flex items-center gap-2">
           <span
-            className={`flex items-center gap-1.5 rounded border border-neutral-800 bg-[#0e0e10] px-2.5 py-1.5 text-[11px] uppercase tracking-wider ${
-              ready ? 'text-emerald-400' : 'text-amber-400'
+            className={`flex items-center gap-1.5 rounded border bg-white px-2.5 py-1.5 text-[11px] uppercase tracking-wider dark:bg-[#0e0e10] ${
+              ready
+                ? 'border-emerald-300 text-emerald-600 dark:border-neutral-800 dark:text-emerald-400'
+                : 'border-amber-300 text-amber-600 dark:border-neutral-800 dark:text-amber-400'
             }`}
           >
             <span className="h-1.5 w-1.5 rounded-full bg-current" />
@@ -112,12 +136,16 @@ export default function App() {
       <SidePanel
         open={panelOpen}
         onToggle={() => setPanelOpen((v) => !v)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
         footer={
-          <div className="flex items-center justify-between gap-2 text-[11px] text-neutral-500">
-            <span>{layout.name} · drag · scroll · type</span>
+          <div className="flex items-center justify-between gap-2 text-[11px] text-zinc-500 dark:text-neutral-500">
+            <span>
+              {layout.name} · {keyboardStyle === 'mac' ? 'Mac' : 'Win'} · drag · type
+            </span>
             <button
               onClick={reset}
-              className="rounded border border-neutral-800 px-2.5 py-1 text-neutral-400 transition hover:border-neutral-700 hover:text-neutral-200"
+              className="rounded border border-zinc-200 px-2.5 py-1 text-zinc-600 transition hover:border-zinc-300 hover:text-zinc-900 dark:border-neutral-800 dark:text-neutral-400 dark:hover:border-neutral-700 dark:hover:text-neutral-200"
             >
               Reset
             </button>
@@ -139,13 +167,19 @@ export default function App() {
         </PanelSection>
 
         <PanelSection title="Board" defaultOpen>
-          <div className="px-4 pb-1 pt-1 text-[10px] uppercase tracking-wider text-neutral-600">Layout</div>
+          <SubLabel>Layout</SubLabel>
           <OptionList
-            options={LAYOUTS.map((l) => ({ id: l.id, label: l.name }))}
-            value={layoutId}
-            onChange={setLayoutId}
+            options={LAYOUT_FAMILIES.map((l) => ({ id: l.id, label: l.name }))}
+            value={layoutFamily}
+            onChange={(v) => setLayoutFamily(v as LayoutFamily)}
           />
-          <div className="px-4 pb-1 pt-3 text-[10px] uppercase tracking-wider text-neutral-600">Type</div>
+          <SubLabel className="pt-3">Style</SubLabel>
+          <OptionList
+            options={KEYBOARD_STYLES.map((s) => ({ id: s.id, label: s.name }))}
+            value={keyboardStyle}
+            onChange={(v) => setKeyboardStyle(v as KeyboardStyle)}
+          />
+          <SubLabel className="pt-3">Type</SubLabel>
           <OptionList
             options={BOARD_TYPE_OPTIONS.map((b) => ({
               id: b,
@@ -178,7 +212,7 @@ export default function App() {
         </PanelSection>
 
         <PanelSection title="Internals" defaultOpen={false}>
-          <div className="px-4 pb-1 pt-1 text-[10px] uppercase tracking-wider text-neutral-600">Plate</div>
+          <SubLabel>Plate</SubLabel>
           <OptionList
             options={PLATE_OPTIONS.map((p) => ({
               id: p,
@@ -192,11 +226,21 @@ export default function App() {
         </PanelSection>
 
         <PanelSection title="Settings" defaultOpen={false}>
-          <div className="px-4 py-2 text-[12px] text-neutral-500">
+          <div className="px-4 py-2 text-[12px] text-zinc-500 dark:text-neutral-500">
             Volume, auto-rotate, ANSI/ISO — coming soon.
           </div>
         </PanelSection>
       </SidePanel>
+    </div>
+  );
+}
+
+function SubLabel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div
+      className={`px-4 pb-1 pt-1 text-[10px] uppercase tracking-wider text-zinc-400 dark:text-neutral-600 ${className}`}
+    >
+      {children}
     </div>
   );
 }
@@ -217,7 +261,7 @@ function ShareButton() {
   return (
     <button
       onClick={onClick}
-      className="rounded border border-neutral-800 bg-[#0e0e10] px-3 py-1.5 text-[12px] text-neutral-200 transition hover:border-neutral-700"
+      className="rounded border border-zinc-200 bg-white px-3 py-1.5 text-[12px] text-zinc-700 transition hover:border-zinc-300 dark:border-neutral-800 dark:bg-[#0e0e10] dark:text-neutral-200 dark:hover:border-neutral-700"
     >
       {copied ? 'Copied' : 'Share build'}
     </button>

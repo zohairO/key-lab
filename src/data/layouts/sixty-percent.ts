@@ -1,6 +1,7 @@
 import { buildLayout, type RowEntry } from './build-layout';
+import { applyMacLabels } from './relabel';
 
-const ROWS: RowEntry[][] = [
+const TOP_ROWS: RowEntry[][] = [
   // row 0: number row
   [
     [1, 'Backquote', '`'],
@@ -33,21 +34,39 @@ const ROWS: RowEntry[][] = [
     [1, 'Comma', ','], [1, 'Period', '.'], [1, 'Slash', '/'],
     [2.75, 'ShiftRight', 'Shift', 'mod'],
   ],
-  // row 4: bottom row
-  [
-    [1.25, 'ControlLeft', 'Ctrl', 'mod'],
-    [1.25, 'MetaLeft', 'Win', 'mod'],
-    [1.25, 'AltLeft', 'Alt', 'mod'],
-    [6.25, 'Space', '', 'space'],
-    [1.25, 'AltRight', 'Alt', 'mod'],
-    [1.25, 'MetaRight', 'Win', 'mod'],
-    [1.25, 'ContextMenu', 'Fn', 'mod'],
-    [1.25, 'ControlRight', 'Ctrl', 'mod'],
-  ],
 ];
 
-export const sixtyPercent = buildLayout({
-  id: 'sixty-percent',
+const BOTTOM_WIN: RowEntry[] = [
+  [1.25, 'ControlLeft', 'Ctrl', 'mod'],
+  [1.25, 'MetaLeft', 'Win', 'mod'],
+  [1.25, 'AltLeft', 'Alt', 'mod'],
+  [6.25, 'Space', '', 'space'],
+  [1.25, 'AltRight', 'Alt', 'mod'],
+  [1.25, 'MetaRight', 'Win', 'mod'],
+  [1.25, 'ContextMenu', 'Fn', 'mod'],
+  [1.25, 'ControlRight', 'Ctrl', 'mod'],
+];
+
+// Mac bottom row order, going outward from spacebar: ⌘ → ⌥ → ⌃ → fn
+const BOTTOM_MAC: RowEntry[] = [
+  [1.25, 'ContextMenu', 'fn', 'mod'],
+  [1.25, 'ControlLeft', '⌃', 'mod'],
+  [1.25, 'AltLeft', '⌥', 'mod'],
+  [1.25, 'MetaLeft', '⌘', 'mod'],
+  [6.25, 'Space', '', 'space'],
+  [1.25, 'MetaRight', '⌘', 'mod'],
+  [1.25, 'AltRight', '⌥', 'mod'],
+  [1.25, 'ControlRight', '⌃', 'mod'],
+];
+
+export const sixtyPercentWin = buildLayout({
+  id: 'sixty-percent-windows',
   name: '60% ANSI',
-  rows: ROWS,
+  rows: [...TOP_ROWS, BOTTOM_WIN],
+});
+
+export const sixtyPercentMac = buildLayout({
+  id: 'sixty-percent-mac',
+  name: '60% ANSI',
+  rows: [...applyMacLabels(TOP_ROWS), BOTTOM_MAC],
 });

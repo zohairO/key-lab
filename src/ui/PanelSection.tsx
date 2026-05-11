@@ -10,12 +10,12 @@ interface PanelSectionProps {
 export function PanelSection({ title, defaultOpen = true, children }: PanelSectionProps) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <section className="border-b border-neutral-800/80">
+    <section className="border-b border-zinc-200 dark:border-neutral-800/80">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center gap-2 px-4 py-3 text-left text-[10px] font-medium uppercase tracking-[0.14em] text-neutral-500 transition hover:text-neutral-300"
+        className="flex w-full items-center gap-2 px-4 py-3 text-left text-[10px] font-medium uppercase tracking-[0.14em] text-zinc-500 transition hover:text-zinc-700 dark:text-neutral-500 dark:hover:text-neutral-300"
       >
-        <ChevronIcon className="h-3 w-3 shrink-0 text-neutral-600" open={open} />
+        <ChevronIcon className="h-3 w-3 shrink-0 text-zinc-400 dark:text-neutral-600" open={open} />
         <span>{title}</span>
       </button>
       {open && <div className="pb-3">{children}</div>}

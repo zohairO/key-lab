@@ -1,12 +1,20 @@
 import type { ReactNode } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import type { Theme } from '../../types';
 
 interface SceneProps {
   children?: ReactNode;
+  theme: Theme;
 }
 
-export function Scene({ children }: SceneProps) {
+export function Scene({ children, theme }: SceneProps) {
+  const dark = theme === 'dark';
+  const bgColor = dark ? '#0b0b0e' : '#f4f4f5';
+  const ambient = dark ? 0.35 : 0.65;
+  const directional = dark ? 1.1 : 0.85;
+  const fill = dark ? 0.25 : 0.35;
+
   return (
     <Canvas
       shadows
@@ -14,12 +22,12 @@ export function Scene({ children }: SceneProps) {
       gl={{ antialias: true }}
       dpr={[1, 2]}
     >
-      <color attach="background" args={['#0b0b0e']} />
+      <color attach="background" args={[bgColor]} />
 
-      <ambientLight intensity={0.35} />
+      <ambientLight intensity={ambient} />
       <directionalLight
         position={[6, 10, 6]}
-        intensity={1.1}
+        intensity={directional}
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
@@ -28,7 +36,7 @@ export function Scene({ children }: SceneProps) {
         shadow-camera-top={10}
         shadow-camera-bottom={-10}
       />
-      <directionalLight position={[-5, 4, -3]} intensity={0.25} />
+      <directionalLight position={[-5, 4, -3]} intensity={fill} />
 
       {children}
 

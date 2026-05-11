@@ -6,6 +6,12 @@ export type BoardType = 'flat' | 'low-profile' | 'mechanical';
 
 export type PlateMaterial = 'fr4' | 'polycarbonate' | 'aluminum' | 'brass';
 
+export type KeyboardStyle = 'windows' | 'mac';
+
+export type LayoutFamily = 'sixty-percent' | 'sixty-five-percent';
+
+export type Theme = 'dark' | 'light';
+
 export interface KeyDef {
   code: string;     // KeyboardEvent.code, e.g. "KeyA", "Space"
   label: string;

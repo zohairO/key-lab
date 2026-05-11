@@ -1,20 +1,35 @@
-import type { BoardType, KeycapProfile, PlateMaterial } from '../types';
+import type {
+  BoardType,
+  KeyboardStyle,
+  KeycapProfile,
+  LayoutFamily,
+  PlateMaterial,
+  Theme,
+} from '../types';
 
 export interface BuildState {
   packId: string;
   keycap: KeycapProfile;
   boardType: BoardType;
   plateMaterial: PlateMaterial;
-  layoutId: string;
+  layoutFamily: LayoutFamily;
+  keyboardStyle: KeyboardStyle;
+  theme: Theme;
 }
 
 const KEYCAP_VALUES: KeycapProfile[] = ['thin-abs', 'thick-pbt', 'tall-pbt'];
 const BOARD_VALUES: BoardType[] = ['flat', 'low-profile', 'mechanical'];
 const PLATE_VALUES: PlateMaterial[] = ['fr4', 'polycarbonate', 'aluminum', 'brass'];
+const FAMILY_VALUES: LayoutFamily[] = ['sixty-percent', 'sixty-five-percent'];
+const STYLE_VALUES: KeyboardStyle[] = ['windows', 'mac'];
+const THEME_VALUES: Theme[] = ['dark', 'light'];
 
 const isKeycapProfile = (v: string): v is KeycapProfile => (KEYCAP_VALUES as string[]).includes(v);
 const isBoardType = (v: string): v is BoardType => (BOARD_VALUES as string[]).includes(v);
 const isPlateMaterial = (v: string): v is PlateMaterial => (PLATE_VALUES as string[]).includes(v);
+const isLayoutFamily = (v: string): v is LayoutFamily => (FAMILY_VALUES as string[]).includes(v);
+const isKeyboardStyle = (v: string): v is KeyboardStyle => (STYLE_VALUES as string[]).includes(v);
+const isTheme = (v: string): v is Theme => (THEME_VALUES as string[]).includes(v);
 
 export function readBuildHash(): Partial<BuildState> {
   const hash = window.location.hash.replace(/^#/, '');
@@ -29,18 +44,24 @@ export function readBuildHash(): Partial<BuildState> {
   if (board && isBoardType(board)) out.boardType = board;
   const plate = params.get('plate');
   if (plate && isPlateMaterial(plate)) out.plateMaterial = plate;
-  const layoutId = params.get('layout');
-  if (layoutId) out.layoutId = layoutId;
+  const layout = params.get('layout');
+  if (layout && isLayoutFamily(layout)) out.layoutFamily = layout;
+  const style = params.get('style');
+  if (style && isKeyboardStyle(style)) out.keyboardStyle = style;
+  const theme = params.get('theme');
+  if (theme && isTheme(theme)) out.theme = theme;
   return out;
 }
 
 export function writeBuildHash(state: BuildState): void {
   const params = new URLSearchParams();
-  params.set('layout', state.layoutId);
+  params.set('layout', state.layoutFamily);
+  params.set('style', state.keyboardStyle);
   params.set('board', state.boardType);
   params.set('pack', state.packId);
   params.set('keycap', state.keycap);
   params.set('plate', state.plateMaterial);
+  params.set('theme', state.theme);
   const next = `#${params.toString()}`;
   if (window.location.hash !== next) {
     window.history.replaceState(null, '', next);
