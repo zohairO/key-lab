@@ -8,6 +8,19 @@ const ONSET_JITTER_MS = 5;       // ±5ms onset randomization
 const MASTER_GAIN = 0.7;
 
 /**
+ * EQ chain applied to the UP stroke ONLY. Strips the bass thock (high-pass
+ * at 1.2kHz), then boosts the click frequencies around 3-4kHz. Combined
+ * with skipping the bottom-out transient at the start of the buffer, this
+ * makes a keyup sound qualitatively different from the press — sharper,
+ * "clickier", less heavy.
+ */
+const UPSTROKE_EQ: FilterPreset[] = [
+  { type: 'highpass', frequency: 1200, Q: 0.7 },
+  { type: 'peaking', frequency: 3800, gain: 5, Q: 1.6 },
+  { type: 'highshelf', frequency: 6000, gain: 3 },
+];
+
+/**
  * Web Audio engine for playing per-key samples with a keycap EQ filter applied.
  * Handles both multi-file packs (one sample per row + per-key overrides) and
  * sprite packs (single audio file with offset/duration per key).
@@ -108,7 +121,7 @@ export class AudioEngine {
     const upPitch = isUp ? 1.06 : 1.0;
     src.playbackRate.value = upPitch + (Math.random() * 2 - 1) * PITCH_JITTER;
 
-    // EQ chain: src -> keycap filters -> plate filters -> masterGain
+    // EQ chain: src -> keycap filters -> plate filters [-> upstroke filters] -> masterGain
     const buildFilters = (presets: FilterPreset[]) =>
       presets.map((preset) => {
         const f = ctx.createBiquadFilter();
@@ -118,7 +131,11 @@ export class AudioEngine {
         if (preset.Q !== undefined) f.Q.value = preset.Q;
         return f;
       });
-    const filters = [...buildFilters(KEYCAP_EQ[this.keycap]), ...buildFilters(PLATE_EQ[this.plate])];
+    const filters = [
+      ...buildFilters(KEYCAP_EQ[this.keycap]),
+      ...buildFilters(PLATE_EQ[this.plate]),
+      ...(isUp ? buildFilters(UPSTROKE_EQ) : []),
+    ];
 
     let node: AudioNode = src;
     for (const f of filters) {
@@ -127,16 +144,24 @@ export class AudioEngine {
     }
     // Per-call gain stage — upstroke is quieter than keydown.
     const callGain = ctx.createGain();
-    callGain.gain.value = isUp ? 0.45 : 1.0;
+    callGain.gain.value = isUp ? 0.40 : 1.0;
     node.connect(callGain);
     callGain.connect(this.masterGain!);
 
     const onsetSec = (Math.random() * 2 - 1) * (ONSET_JITTER_MS / 1000);
     const startTime = ctx.currentTime + Math.max(0, onsetSec);
+
     if (slice.offsetSec !== undefined && slice.durationSec !== undefined) {
-      src.start(startTime, slice.offsetSec, slice.durationSec > 0 ? slice.durationSec : undefined);
+      // Sprite pack — start within the big audio file at slice.offsetSec.
+      // For upstroke: skip into the slice past the bottom-out transient.
+      const upSkipSec = Math.min(0.030, slice.durationSec * 0.4);
+      const offset = slice.offsetSec + (isUp ? upSkipSec : 0);
+      const duration = slice.durationSec - (isUp ? upSkipSec : 0);
+      src.start(startTime, offset, duration > 0 ? duration : undefined);
     } else {
-      src.start(startTime);
+      // Multi-file pack — start at 0 (or skip a bit for upstroke).
+      const upSkipSec = isUp ? Math.min(0.030, src.buffer!.duration * 0.4) : 0;
+      src.start(startTime, upSkipSec);
     }
   }
 }

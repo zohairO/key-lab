@@ -6,17 +6,15 @@ import { makeKeycapGeometry } from './keycap-geometry';
 
 interface KeycapProps {
   cx: number;
-  /** Bottom Y of the keycap at rest (= plate top Y). */
   restY: number;
   cz: number;
-  width: number;       // scene units, already accounts for inter-key gap
+  width: number;
   depth: number;
   height: number;
   topShrinkX: number;
   topShrinkZ: number;
   dishDepth: number;
   topSegments: number;
-  /** X-axis rotation applied around the keycap's bottom edge (radians). */
   tilt: number;
   label: string;
   pressed: boolean;
@@ -30,6 +28,14 @@ const RELEASE_DAMP = 12;
 const EMISSIVE_DAMP = 25;
 const PRESSED_EMISSIVE_INTENSITY = 0.7;
 const PRESSED_EMISSIVE = '#5a8cff';
+
+/** Slightly darker tint for side walls vs the top face. Creates visible
+ *  "top platform vs side" separation without needing real shadows. */
+function darkerSide(hex: string): string {
+  const c = new THREE.Color(hex);
+  c.multiplyScalar(0.78);
+  return `#${c.getHexString()}`;
+}
 
 export const Keycap = memo(function Keycap({
   cx, restY, cz, width, depth, height,
@@ -58,32 +64,37 @@ export const Keycap = memo(function Keycap({
       g.position.y = THREE.MathUtils.damp(g.position.y, targetY, damp, delta);
     }
     const m = meshRef.current;
-    if (m) {
-      const mat = m.material as THREE.MeshStandardMaterial;
+    if (m && Array.isArray(m.material)) {
+      // Only the top material gets the emissive press highlight.
+      const topMat = m.material[2] as THREE.MeshStandardMaterial;
       const target = pressed ? PRESSED_EMISSIVE_INTENSITY : 0;
-      mat.emissiveIntensity = THREE.MathUtils.damp(
-        mat.emissiveIntensity, target, EMISSIVE_DAMP, delta,
+      topMat.emissiveIntensity = THREE.MathUtils.damp(
+        topMat.emissiveIntensity, target, EMISSIVE_DAMP, delta,
       );
     }
   });
 
+  const sideColor = useMemo(() => darkerSide(capColor), [capColor]);
+
   return (
-    // Outer group: positioned at the keycap's BOTTOM edge (= plate top).
-    // Press animation lerps this group's Y down by PRESS_DEPTH.
     <group ref={groupRef}>
-      {/* Tilt around bottom edge. Sculpted profiles use this; uniform = 0. */}
       <group rotation={[tilt, 0, 0]}>
-        {/* Lift the mesh so its geometric center sits at +height/2 above the
-            rotation point — i.e. the mesh's bottom face sits on the plate. */}
         <group position={[0, height / 2, 0]}>
           <mesh ref={meshRef} geometry={geometry} castShadow receiveShadow>
+            {/* BoxGeometry face groups, in order: +X, -X, +Y (top), -Y (bottom), +Z, -Z */}
+            <meshStandardMaterial attach="material-0" color={sideColor} roughness={0.6} metalness={0.05} />
+            <meshStandardMaterial attach="material-1" color={sideColor} roughness={0.6} metalness={0.05} />
             <meshStandardMaterial
+              attach="material-2"
               color={capColor}
-              roughness={0.55}
+              roughness={0.5}
               metalness={0.05}
               emissive={PRESSED_EMISSIVE}
               emissiveIntensity={0}
             />
+            <meshStandardMaterial attach="material-3" color={sideColor} roughness={0.7} metalness={0.05} />
+            <meshStandardMaterial attach="material-4" color={sideColor} roughness={0.6} metalness={0.05} />
+            <meshStandardMaterial attach="material-5" color={sideColor} roughness={0.6} metalness={0.05} />
           </mesh>
           {label && (
             <Text

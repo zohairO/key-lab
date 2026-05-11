@@ -38,11 +38,11 @@ export function makeKeycapGeometry({
   const topHalfW = Math.max(0.001, halfW - topShrinkX / 2);
   const topHalfD = Math.max(0.001, halfD - topShrinkZ / 2);
 
-  // Shoulder higher up — the chamfer is now only the top 20% of the keycap.
-  const SHOULDER_T = 0.80;
-  // Only 20% of total taper happens below the shoulder. The remaining 80% is
-  // packed into the top 20% of height → visible chamfer angle.
-  const SHOULDER_TAPER_T = 0.20;
+  // Shoulder very high — the chamfer is only the top 15% of the keycap.
+  const SHOULDER_T = 0.85;
+  // Only 15% of total taper happens below the shoulder. The remaining 85% is
+  // packed into the top 15% of height → sharp, visible chamfer angle.
+  const SHOULDER_TAPER_T = 0.15;
 
   const shoulderY = -halfH + SHOULDER_T * H;
   const shoulderHalfW = halfW + (topHalfW - halfW) * SHOULDER_TAPER_T;
