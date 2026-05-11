@@ -3,31 +3,26 @@ import type { KeycapShape } from '../types';
 export interface KeycapShapeSpec {
   name: string;
   description: string;
-  /** Height in scene units (1u ≈ 19.05mm in real life). */
   height: number;
-  /** Fraction of width/depth that the top shrinks vs the bottom (per side avg). */
   topShrinkFactor: number;
-  /** Concave bowl depth at top center. */
   dishDepth: number;
-  /** Top-face tessellation — higher = smoother dish, more triangles. */
   topSegments: number;
-  /**
-   * Per-row X-axis rotation (radians) applied around the keycap's bottom edge.
-   * Positive = top tilts toward the user (camera at +Z). Row 0 is the back of
-   * the keyboard (number row in 60%/65%). Sculpted profiles tilt back rows
-   * forward and front rows back so the legends stay readable. Uniform
-   * profiles return 0 for all rows. Length supports up to 6 rows (TKL).
-   */
   sculpt: number[];
 }
 
+/**
+ * Real Cherry-profile keycap proportions: ~28% smaller at the top vs the
+ * bottom (per side). The previous 20% was too gentle and the caps read as
+ * boxy. Combined with the steeper chamfer in keycap-geometry.ts, swapping
+ * shapes should now produce a clearly different silhouette.
+ */
 export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
   cherry: {
     name: 'Cherry',
-    description: 'Short sculpted — comfortable, most common',
+    description: 'Standard sculpted — short, comfortable, most common',
     height: 0.50,
-    topShrinkFactor: 0.20,
-    dishDepth: 0.060,
+    topShrinkFactor: 0.28,
+    dishDepth: 0.075,
     topSegments: 6,
     sculpt: [+0.14, +0.07, +0.02, -0.06, -0.10, -0.10],
   },
@@ -35,8 +30,8 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     name: 'OEM',
     description: 'Slightly taller Cherry — most stock keyboards',
     height: 0.56,
-    topShrinkFactor: 0.18,
-    dishDepth: 0.055,
+    topShrinkFactor: 0.26,
+    dishDepth: 0.070,
     topSegments: 6,
     sculpt: [+0.12, +0.06, +0.02, -0.06, -0.10, -0.10],
   },
@@ -44,8 +39,8 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     name: 'SA',
     description: 'Tall sculpted, spherical bowl — classic "thocky" enthusiast',
     height: 0.82,
-    topShrinkFactor: 0.24,
-    dishDepth: 0.090,
+    topShrinkFactor: 0.32,
+    dishDepth: 0.110,
     topSegments: 7,
     sculpt: [+0.22, +0.12, +0.0, -0.13, -0.18, -0.18],
   },
@@ -53,8 +48,8 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     name: 'MT3',
     description: 'Tallest sculpted — deep ergonomic spherical bowl',
     height: 0.90,
-    topShrinkFactor: 0.22,
-    dishDepth: 0.105,
+    topShrinkFactor: 0.30,
+    dishDepth: 0.130,
     topSegments: 7,
     sculpt: [+0.24, +0.14, +0.0, -0.13, -0.19, -0.19],
   },
@@ -62,8 +57,8 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     name: 'DSA',
     description: 'Uniform short — same shape every row, shallow dish',
     height: 0.40,
-    topShrinkFactor: 0.13,
-    dishDepth: 0.040,
+    topShrinkFactor: 0.18,
+    dishDepth: 0.050,
     topSegments: 6,
     sculpt: [0, 0, 0, 0, 0, 0],
   },
@@ -71,18 +66,17 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     name: 'XDA',
     description: 'Uniform medium — wider top face than DSA',
     height: 0.46,
-    topShrinkFactor: 0.10,
-    dishDepth: 0.035,
+    topShrinkFactor: 0.14,
+    dishDepth: 0.045,
     topSegments: 6,
     sculpt: [0, 0, 0, 0, 0, 0],
   },
-  // Board-forced profiles
   chiclet: {
     name: 'Chiclet',
     description: 'Magic Keyboard / MX Keys — flat, almost no taper or dish',
     height: 0.16,
-    topShrinkFactor: 0.06,
-    dishDepth: 0.012,
+    topShrinkFactor: 0.08,
+    dishDepth: 0.018,
     topSegments: 4,
     sculpt: [0, 0, 0, 0, 0, 0],
   },
@@ -90,8 +84,8 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     name: 'Low-profile mech',
     description: 'Gateron LP / Kailh Choc — short mechanical with slight sculpt',
     height: 0.30,
-    topShrinkFactor: 0.12,
-    dishDepth: 0.024,
+    topShrinkFactor: 0.18,
+    dishDepth: 0.030,
     topSegments: 5,
     sculpt: [+0.06, +0.04, 0, -0.03, -0.05, -0.05],
   },

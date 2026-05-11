@@ -89,8 +89,8 @@ export class AudioEngine {
     return promise;
   }
 
-  /** Play a key. No-op if the sample isn't loaded yet (preloads it for next time). */
-  play(key: KeyDef): void {
+  /** Play a key down or release. No-op if the sample isn't loaded yet. */
+  play(key: KeyDef, action: 'down' | 'up' = 'down'): void {
     const slice = resolveSlice(this.pack, key);
     if (!slice) return;
 
@@ -101,9 +101,12 @@ export class AudioEngine {
       return;
     }
 
+    const isUp = action === 'up';
     const src = ctx.createBufferSource();
     src.buffer = buf;
-    src.playbackRate.value = 1 + (Math.random() * 2 - 1) * PITCH_JITTER;
+    // Upstroke: slightly higher pitch (sounds "lighter"), randomization same.
+    const upPitch = isUp ? 1.06 : 1.0;
+    src.playbackRate.value = upPitch + (Math.random() * 2 - 1) * PITCH_JITTER;
 
     // EQ chain: src -> keycap filters -> plate filters -> masterGain
     const buildFilters = (presets: FilterPreset[]) =>
@@ -122,7 +125,11 @@ export class AudioEngine {
       node.connect(f);
       node = f;
     }
-    node.connect(this.masterGain!);
+    // Per-call gain stage — upstroke is quieter than keydown.
+    const callGain = ctx.createGain();
+    callGain.gain.value = isUp ? 0.45 : 1.0;
+    node.connect(callGain);
+    callGain.connect(this.masterGain!);
 
     const onsetSec = (Math.random() * 2 - 1) * (ONSET_JITTER_MS / 1000);
     const startTime = ctx.currentTime + Math.max(0, onsetSec);

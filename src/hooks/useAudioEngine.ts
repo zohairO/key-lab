@@ -49,17 +49,26 @@ export function useAudioEngine({ pack, layout, keycap, plateMaterial, enabled = 
     engine.setPlate(plateMaterial);
   }, [engine, plateMaterial]);
 
-  // Keyboard input listener
+  // Keyboard input listener — separate samples for down and up.
   useEffect(() => {
     if (!enabled) return;
     const onDown = (e: KeyboardEvent) => {
       if (e.repeat) return;
       const key = codeIndex.get(e.code);
       if (!key) return;
-      engine.play(key);
+      engine.play(key, 'down');
+    };
+    const onUp = (e: KeyboardEvent) => {
+      const key = codeIndex.get(e.code);
+      if (!key) return;
+      engine.play(key, 'up');
     };
     window.addEventListener('keydown', onDown);
-    return () => window.removeEventListener('keydown', onDown);
+    window.addEventListener('keyup', onUp);
+    return () => {
+      window.removeEventListener('keydown', onDown);
+      window.removeEventListener('keyup', onUp);
+    };
   }, [engine, codeIndex, enabled]);
 
   return { engine, ready };
