@@ -2,7 +2,7 @@ import { ContactShadows, RoundedBox } from '@react-three/drei';
 import { KEYCAP_VISUAL } from '../../data/keycap-profiles';
 import { BOARD_CONFIG } from '../../data/board-types';
 import { PLATE_VISUAL } from '../../data/plate-materials';
-import { KEYCAP_SHAPES, sculptForRow } from '../../data/keycap-shapes';
+import { KEYCAP_SHAPES, SPACEBAR_BULGE_FACTOR, sculptForRow } from '../../data/keycap-shapes';
 import type {
   BoardType,
   KeycapProfile,
@@ -107,6 +107,11 @@ export function Keyboard({
         const finalLabelColor = keyOverride?.label ?? zoneOverride?.label ?? labelColor;
 
         const tilt = sculptForRow(effectiveShape, k.y);
+        // Spacebar bulges convex; every other key dishes concave.
+        const effectiveDish =
+          k.zone === 'space'
+            ? shape.dishDepth * SPACEBAR_BULGE_FACTOR
+            : shape.dishDepth;
 
         return (
           <Keycap
@@ -119,7 +124,7 @@ export function Keyboard({
             height={shape.height}
             topShrinkX={w * shape.topShrinkFactor}
             topShrinkZ={d * shape.topShrinkFactor}
-            dishDepth={shape.dishDepth}
+            dishDepth={effectiveDish}
             topSegments={shape.topSegments}
             tilt={tilt}
             label={k.label}

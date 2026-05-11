@@ -22,7 +22,7 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     description: 'Standard sculpted — short, comfortable, most common',
     height: 0.50,
     topShrinkFactor: 0.35,
-    dishDepth: 0.085,
+    dishDepth: 0.120,
     topSegments: 6,
     sculpt: [+0.14, +0.07, +0.02, -0.06, -0.10, -0.10],
   },
@@ -31,7 +31,7 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     description: 'Slightly taller Cherry — most stock keyboards',
     height: 0.56,
     topShrinkFactor: 0.33,
-    dishDepth: 0.080,
+    dishDepth: 0.115,
     topSegments: 6,
     sculpt: [+0.12, +0.06, +0.02, -0.06, -0.10, -0.10],
   },
@@ -40,7 +40,7 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     description: 'Tall sculpted, spherical bowl — classic "thocky" enthusiast',
     height: 0.82,
     topShrinkFactor: 0.38,
-    dishDepth: 0.130,
+    dishDepth: 0.180,
     topSegments: 7,
     sculpt: [+0.22, +0.12, +0.0, -0.13, -0.18, -0.18],
   },
@@ -49,7 +49,7 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     description: 'Tallest sculpted — deep ergonomic spherical bowl',
     height: 0.90,
     topShrinkFactor: 0.36,
-    dishDepth: 0.150,
+    dishDepth: 0.210,
     topSegments: 7,
     sculpt: [+0.24, +0.14, +0.0, -0.13, -0.19, -0.19],
   },
@@ -58,7 +58,7 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     description: 'Uniform short — same shape every row, shallow dish',
     height: 0.40,
     topShrinkFactor: 0.18,
-    dishDepth: 0.050,
+    dishDepth: 0.075,
     topSegments: 6,
     sculpt: [0, 0, 0, 0, 0, 0],
   },
@@ -67,7 +67,7 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     description: 'Uniform medium — wider top face than DSA',
     height: 0.46,
     topShrinkFactor: 0.14,
-    dishDepth: 0.045,
+    dishDepth: 0.070,
     topSegments: 6,
     sculpt: [0, 0, 0, 0, 0, 0],
   },
@@ -76,7 +76,7 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     description: 'Magic Keyboard / MX Keys — flat, almost no taper or dish',
     height: 0.16,
     topShrinkFactor: 0.08,
-    dishDepth: 0.018,
+    dishDepth: 0.025,
     topSegments: 4,
     sculpt: [0, 0, 0, 0, 0, 0],
   },
@@ -85,11 +85,16 @@ export const KEYCAP_SHAPES: Record<KeycapShape, KeycapShapeSpec> = {
     description: 'Gateron LP / Kailh Choc — short mechanical with slight sculpt',
     height: 0.30,
     topShrinkFactor: 0.18,
-    dishDepth: 0.030,
+    dishDepth: 0.045,
     topSegments: 5,
     sculpt: [+0.06, +0.04, 0, -0.03, -0.05, -0.05],
   },
 };
+
+/** Spacebars are convex (slight bulge up) rather than concave. The magnitude
+ *  is much smaller than a normal dish — real spacebars only bulge ~1mm over
+ *  ~7mm of cap height. We pass a NEGATIVE dishDepth for space keys. */
+export const SPACEBAR_BULGE_FACTOR = -0.35;
 
 export const KEYCAP_SHAPE_OPTIONS: KeycapShape[] = ['cherry', 'oem', 'sa', 'mt3', 'dsa', 'xda'];
 
