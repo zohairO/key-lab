@@ -83,6 +83,17 @@ export default function App() {
       p.build.keyboardStyle === keyboardStyle,
   );
 
+  // Visual overrides come from the matching preset (if any). When the user
+  // customises away from the preset, overrides drop and the build returns
+  // to its generic look from KEYCAP_VISUAL.
+  const visualOverrides = matchingPreset
+    ? {
+        caseColor: matchingPreset.build.caseColorOverride,
+        capColor: matchingPreset.build.capColorOverride,
+        labelColor: matchingPreset.build.labelColorOverride,
+      }
+    : undefined;
+
   const applyPreset = (id: string) => {
     const preset = PRESETS.find((p) => p.id === id);
     if (!preset) return;
@@ -114,6 +125,7 @@ export default function App() {
           boardType={boardType}
           plateMaterial={plateMaterial}
           layout={layout}
+          overrides={visualOverrides}
         />
       </Scene>
 
@@ -164,6 +176,14 @@ export default function App() {
               applyPreset(id);
             }}
           />
+          {matchingPreset?.authenticityNotes && (
+            <div className="mx-4 mt-2 rounded border border-zinc-200 bg-zinc-50 p-2 text-[11px] leading-snug text-zinc-600 dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-400">
+              <div className="mb-1 font-medium uppercase tracking-wider text-zinc-500 dark:text-neutral-500">
+                Authenticity
+              </div>
+              {matchingPreset.authenticityNotes}
+            </div>
+          )}
         </PanelSection>
 
         <PanelSection title="Board" defaultOpen>

@@ -5,20 +5,33 @@ import { PLATE_VISUAL } from '../../data/plate-materials';
 import type { BoardType, KeycapProfile, Layout, PlateMaterial } from '../../types';
 import { Keycap } from './Keycap';
 
+export interface KeyboardVisualOverrides {
+  caseColor?: string;
+  capColor?: string;
+  labelColor?: string;
+}
+
 interface KeyboardProps {
   pressedKeys: Set<string>;
   keycap: KeycapProfile;
   boardType: BoardType;
   plateMaterial: PlateMaterial;
   layout: Layout;
+  overrides?: KeyboardVisualOverrides;
 }
 
-export function Keyboard({ pressedKeys, keycap, boardType, plateMaterial, layout }: KeyboardProps) {
+export function Keyboard({
+  pressedKeys, keycap, boardType, plateMaterial, layout, overrides,
+}: KeyboardProps) {
   const visual = KEYCAP_VISUAL[keycap];
   const board = BOARD_CONFIG[boardType];
   const plate = PLATE_VISUAL[plateMaterial];
 
   const keycapHeight = board.keycapHeightOverride ?? visual.height;
+
+  const caseColor = overrides?.caseColor ?? visual.caseColor;
+  const capColor = overrides?.capColor ?? visual.capColor;
+  const labelColor = overrides?.labelColor ?? visual.labelColor;
 
   // Centre the key field on the origin (XZ plane). Row 0 = back (-Z).
   const offsetX = -layout.width / 2;
@@ -56,7 +69,7 @@ export function Keyboard({ pressedKeys, keycap, boardType, plateMaterial, layout
         castShadow
         receiveShadow
       >
-        <meshStandardMaterial color={visual.caseColor} roughness={0.7} metalness={0.15} />
+        <meshStandardMaterial color={caseColor} roughness={0.7} metalness={0.15} />
       </RoundedBox>
 
       {/* Plate (only on mechanical / low-profile) */}
@@ -95,8 +108,8 @@ export function Keyboard({ pressedKeys, keycap, boardType, plateMaterial, layout
             topSegments={board.keycapTopSegments}
             label={k.label}
             pressed={pressedKeys.has(k.code)}
-            capColor={visual.capColor}
-            labelColor={visual.labelColor}
+            capColor={capColor}
+            labelColor={labelColor}
           />
         );
       })}

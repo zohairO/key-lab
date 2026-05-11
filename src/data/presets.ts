@@ -17,7 +17,15 @@ export interface Preset {
     plateMaterial: PlateMaterial;
     layoutFamily: LayoutFamily;
     keyboardStyle: KeyboardStyle;
+    // Optional visual overrides. When the active build matches a preset,
+    // these win over the defaults from KEYCAP_VISUAL. Used for authentic
+    // colorways of specific real keyboards.
+    caseColorOverride?: string;
+    capColorOverride?: string;
+    labelColorOverride?: string;
   };
+  /** Notes on remaining authenticity gaps (visual or audio). */
+  authenticityNotes?: string;
 }
 
 export const PRESETS: Preset[] = [
@@ -49,8 +57,8 @@ export const PRESETS: Preset[] = [
   },
   {
     id: 'keychron-k2',
-    name: 'Keychron K2 / Brown',
-    description: 'Stock mechanical with PBT caps',
+    name: 'Keychron K2 Pro / Brown',
+    description: 'Stock K2 Pro — dark aluminum case, cream PBT caps',
     build: {
       boardType: 'mechanical',
       packId: 'cherrymx-brown-pbt',
@@ -58,7 +66,13 @@ export const PRESETS: Preset[] = [
       plateMaterial: 'fr4',
       layoutFamily: 'sixty-five-percent',
       keyboardStyle: 'windows',
+      // K2 Pro authentic colorway
+      caseColorOverride: '#3a3d42',   // dark gray aluminum top frame
+      capColorOverride: '#dcd8c8',    // cream PBT
+      labelColorOverride: '#3a3a3a',  // dark legends
     },
+    authenticityNotes:
+      'Closest preset to authentic. Gaps: real K2 is 75% (currently rendered as 65% until 75% layout lands), real caps are two-tone (cream alphas + dark mods — currently single tone), audio is generic Cherry Brown rather than a K2-specific recording.',
   },
   {
     id: 'gmmk-pro-pandas',
