@@ -9,6 +9,7 @@ export interface Preset {
     packId: string;
     keycap: KeycapProfile;
     plateMaterial: PlateMaterial;
+    layoutId: string;
   };
 }
 
@@ -16,28 +17,33 @@ export interface Preset {
  * Curated starter builds. Click one and the whole rig reconfigures.
  * Real "browse mode" with photos / search / affiliate links is Phase 2;
  * these are the v0.5 shortcut so users can jump straight to a known sound.
+ *
+ * Note: still approximations until per-keyboard authentic recordings land.
+ * Layouts are best-effort given what we currently support (60% / 65%).
  */
 export const PRESETS: Preset[] = [
   {
     id: 'magic-keyboard',
     name: 'Magic Keyboard',
-    description: 'Apple chiclet — flat, quiet, neutral',
+    description: 'Apple chiclet — flat, quiet, neutral (approx.)',
     build: {
       boardType: 'flat',
       packId: 'cherrymx-brown-pbt',
       keycap: 'thin-abs',
       plateMaterial: 'aluminum',
+      layoutId: 'sixty-five-percent',
     },
   },
   {
     id: 'nuphy-air75',
     name: 'NuPhy Air75',
-    description: 'Low-profile mechanical, soft & balanced',
+    description: 'Low-profile mechanical, soft & balanced (approx.)',
     build: {
       boardType: 'low-profile',
       packId: 'cherrymx-brown-pbt',
       keycap: 'thin-abs',
       plateMaterial: 'polycarbonate',
+      layoutId: 'sixty-five-percent',
     },
   },
   {
@@ -49,6 +55,7 @@ export const PRESETS: Preset[] = [
       packId: 'cherrymx-brown-pbt',
       keycap: 'thick-pbt',
       plateMaterial: 'fr4',
+      layoutId: 'sixty-five-percent',
     },
   },
   {
@@ -60,6 +67,7 @@ export const PRESETS: Preset[] = [
       packId: 'holy-pandas',
       keycap: 'thick-pbt',
       plateMaterial: 'aluminum',
+      layoutId: 'sixty-five-percent',
     },
   },
   {
@@ -71,6 +79,7 @@ export const PRESETS: Preset[] = [
       packId: 'cherrymx-blue-pbt',
       keycap: 'thick-pbt',
       plateMaterial: 'fr4',
+      layoutId: 'sixty-percent',
     },
   },
   {
@@ -82,6 +91,7 @@ export const PRESETS: Preset[] = [
       packId: 'holy-pandas',
       keycap: 'tall-pbt',
       plateMaterial: 'brass',
+      layoutId: 'sixty-percent',
     },
   },
 ];

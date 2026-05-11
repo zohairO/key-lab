@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Scene } from './systems/rendering/Scene';
 import { Keyboard } from './systems/rendering/Keyboard';
-import { sixtyPercent } from './data/sixty-percent';
+import { LAYOUTS, DEFAULT_LAYOUT_ID, getLayout } from './data/layouts';
 import { holyPandas } from './data/sound-packs/holy-pandas';
 import { cherryMxBrownPbt } from './data/sound-packs/cherrymx-brown-pbt';
 import { cherryMxBluePbt } from './data/sound-packs/cherrymx-blue-pbt';
@@ -26,6 +26,7 @@ const DEFAULTS: BuildState = {
   packId: cherryMxBrownPbt.id,
   keycap: 'thick-pbt',
   plateMaterial: 'aluminum',
+  layoutId: DEFAULT_LAYOUT_ID,
 };
 
 export default function App() {
@@ -38,16 +39,21 @@ export default function App() {
   const [plateMaterial, setPlateMaterial] = useState<PlateMaterial>(
     initial.plateMaterial ?? DEFAULTS.plateMaterial,
   );
+  const [layoutId, setLayoutId] = useState<string>(
+    initial.layoutId && LAYOUTS.some((l) => l.id === initial.layoutId)
+      ? initial.layoutId
+      : DEFAULTS.layoutId,
+  );
   const [panelOpen, setPanelOpen] = useState(true);
 
-  const buildState: BuildState = { boardType, packId, keycap, plateMaterial };
+  const layout = getLayout(layoutId);
+  const pack = PACKS.find((p) => p.id === packId) ?? PACKS[0];
 
   useEffect(() => {
-    writeBuildHash(buildState);
-  }, [boardType, packId, keycap, plateMaterial]);
+    writeBuildHash({ boardType, packId, keycap, plateMaterial, layoutId });
+  }, [boardType, packId, keycap, plateMaterial, layoutId]);
 
-  const pack = PACKS.find((p) => p.id === packId) ?? PACKS[0];
-  const { ready } = useAudioEngine({ pack, layout: sixtyPercent, keycap, plateMaterial });
+  const { ready } = useAudioEngine({ pack, layout, keycap, plateMaterial });
   const pressedKeys = usePressedKeys();
 
   const matchingPreset = PRESETS.find(
@@ -55,7 +61,8 @@ export default function App() {
       p.build.boardType === boardType &&
       p.build.packId === packId &&
       p.build.keycap === keycap &&
-      p.build.plateMaterial === plateMaterial,
+      p.build.plateMaterial === plateMaterial &&
+      p.build.layoutId === layoutId,
   );
 
   const applyPreset = (id: string) => {
@@ -65,6 +72,7 @@ export default function App() {
     setPackId(preset.build.packId);
     setKeycap(preset.build.keycap);
     setPlateMaterial(preset.build.plateMaterial);
+    setLayoutId(preset.build.layoutId);
   };
 
   const reset = () => {
@@ -72,6 +80,7 @@ export default function App() {
     setPackId(DEFAULTS.packId);
     setKeycap(DEFAULTS.keycap);
     setPlateMaterial(DEFAULTS.plateMaterial);
+    setLayoutId(DEFAULTS.layoutId);
   };
 
   return (
@@ -82,6 +91,7 @@ export default function App() {
           keycap={keycap}
           boardType={boardType}
           plateMaterial={plateMaterial}
+          layout={layout}
         />
       </Scene>
 
@@ -104,9 +114,7 @@ export default function App() {
         onToggle={() => setPanelOpen((v) => !v)}
         footer={
           <div className="flex items-center justify-between gap-2 text-[11px] text-neutral-500">
-            <span>
-              60% · drag · scroll · type
-            </span>
+            <span>{layout.name} · drag · scroll · type</span>
             <button
               onClick={reset}
               className="rounded border border-neutral-800 px-2.5 py-1 text-neutral-400 transition hover:border-neutral-700 hover:text-neutral-200"
@@ -131,7 +139,13 @@ export default function App() {
         </PanelSection>
 
         <PanelSection title="Board" defaultOpen>
-          <div className="px-4 pb-1 pt-1 text-[10px] uppercase tracking-wider text-neutral-600">Type</div>
+          <div className="px-4 pb-1 pt-1 text-[10px] uppercase tracking-wider text-neutral-600">Layout</div>
+          <OptionList
+            options={LAYOUTS.map((l) => ({ id: l.id, label: l.name }))}
+            value={layoutId}
+            onChange={setLayoutId}
+          />
+          <div className="px-4 pb-1 pt-3 text-[10px] uppercase tracking-wider text-neutral-600">Type</div>
           <OptionList
             options={BOARD_TYPE_OPTIONS.map((b) => ({
               id: b,

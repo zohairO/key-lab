@@ -5,6 +5,7 @@ export interface BuildState {
   keycap: KeycapProfile;
   boardType: BoardType;
   plateMaterial: PlateMaterial;
+  layoutId: string;
 }
 
 const KEYCAP_VALUES: KeycapProfile[] = ['thin-abs', 'thick-pbt', 'tall-pbt'];
@@ -28,11 +29,14 @@ export function readBuildHash(): Partial<BuildState> {
   if (board && isBoardType(board)) out.boardType = board;
   const plate = params.get('plate');
   if (plate && isPlateMaterial(plate)) out.plateMaterial = plate;
+  const layoutId = params.get('layout');
+  if (layoutId) out.layoutId = layoutId;
   return out;
 }
 
 export function writeBuildHash(state: BuildState): void {
   const params = new URLSearchParams();
+  params.set('layout', state.layoutId);
   params.set('board', state.boardType);
   params.set('pack', state.packId);
   params.set('keycap', state.keycap);

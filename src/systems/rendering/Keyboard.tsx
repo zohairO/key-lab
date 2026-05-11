@@ -1,9 +1,8 @@
 import { ContactShadows, RoundedBox } from '@react-three/drei';
-import { sixtyPercent } from '../../data/sixty-percent';
 import { KEYCAP_VISUAL } from '../../data/keycap-profiles';
 import { BOARD_CONFIG } from '../../data/board-types';
 import { PLATE_VISUAL } from '../../data/plate-materials';
-import type { BoardType, KeycapProfile, PlateMaterial } from '../../types';
+import type { BoardType, KeycapProfile, Layout, PlateMaterial } from '../../types';
 import { Keycap } from './Keycap';
 
 interface KeyboardProps {
@@ -11,10 +10,10 @@ interface KeyboardProps {
   keycap: KeycapProfile;
   boardType: BoardType;
   plateMaterial: PlateMaterial;
+  layout: Layout;
 }
 
-export function Keyboard({ pressedKeys, keycap, boardType, plateMaterial }: KeyboardProps) {
-  const layout = sixtyPercent;
+export function Keyboard({ pressedKeys, keycap, boardType, plateMaterial, layout }: KeyboardProps) {
   const visual = KEYCAP_VISUAL[keycap];
   const board = BOARD_CONFIG[boardType];
   const plate = PLATE_VISUAL[plateMaterial];
