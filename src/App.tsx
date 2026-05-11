@@ -32,6 +32,7 @@ import type { SoundPack } from './systems/audio/sound-pack';
 import { SidePanel } from './ui/SidePanel';
 import { PanelSection } from './ui/PanelSection';
 import { OptionList } from './ui/OptionList';
+import { ChipRow } from './ui/ChipRow';
 
 const PACKS: SoundPack[] = [cherryMxBrownPbt, holyPandas, cherryMxBluePbt];
 const KEYCAP_OPTIONS: KeycapProfile[] = ['thin-abs', 'thick-pbt', 'tall-pbt'];
@@ -209,24 +210,26 @@ export default function App() {
         </PanelSection>
 
         <PanelSection title="Board" defaultOpen>
-          <SubLabel>Layout</SubLabel>
-          <OptionList
-            options={LAYOUT_FAMILIES.map((l) => ({ id: l.id, label: l.name }))}
+          <ChipRow
+            label="Layout"
+            options={LAYOUT_FAMILIES.map((l) => ({
+              id: l.id,
+              label: l.name.replace(' ANSI', ''),
+            }))}
             value={layoutFamily}
             onChange={(v) => setLayoutFamily(v as LayoutFamily)}
           />
-          <SubLabel className="pt-3">Style</SubLabel>
-          <OptionList
+          <ChipRow
+            label="Style"
             options={KEYBOARD_STYLES.map((s) => ({ id: s.id, label: s.name }))}
             value={keyboardStyle}
             onChange={(v) => setKeyboardStyle(v as KeyboardStyle)}
           />
-          <SubLabel className="pt-3">Type</SubLabel>
-          <OptionList
+          <ChipRow
+            label="Type"
             options={BOARD_TYPE_OPTIONS.map((b) => ({
               id: b,
               label: BOARD_CONFIG[b].name,
-              description: BOARD_CONFIG[b].description,
             }))}
             value={boardType}
             onChange={(v) => setBoardType(v as BoardType)}
@@ -242,8 +245,8 @@ export default function App() {
         </PanelSection>
 
         <PanelSection title="Keycaps" defaultOpen>
-          <SubLabel>Colorway</SubLabel>
-          <OptionList
+          <ChipRow
+            label="Colorway"
             options={KEYCAP_OPTIONS.map((k) => ({
               id: k,
               label: KEYCAP_LABEL[k],
@@ -253,36 +256,31 @@ export default function App() {
             onChange={(v) => setKeycap(v as KeycapProfile)}
           />
           {boardType === 'mechanical' ? (
-            <>
-              <SubLabel className="pt-3">Profile shape</SubLabel>
-              <OptionList
-                options={KEYCAP_SHAPE_OPTIONS.map((s) => ({
-                  id: s,
-                  label: KEYCAP_SHAPES[s].name,
-                  description: KEYCAP_SHAPES[s].description,
-                }))}
-                value={keycapShape}
-                onChange={(v) => setKeycapShape(v as KeycapShape)}
-              />
-            </>
+            <ChipRow
+              label="Profile shape"
+              options={KEYCAP_SHAPE_OPTIONS.map((s) => ({
+                id: s,
+                label: KEYCAP_SHAPES[s].name,
+              }))}
+              value={keycapShape}
+              onChange={(v) => setKeycapShape(v as KeycapShape)}
+            />
           ) : (
-            <div className="px-4 pt-3 text-[11px] leading-snug text-zinc-500 dark:text-neutral-500">
-              Profile shape is fixed by board type:{' '}
+            <div className="px-4 pb-2 pt-1 text-[11px] leading-snug text-zinc-500 dark:text-neutral-500">
+              Shape forced by board:{' '}
               <span className="text-zinc-700 dark:text-neutral-300">
                 {KEYCAP_SHAPES[BOARD_CONFIG[boardType].forceKeycapShape!].name}
               </span>
-              .
             </div>
           )}
         </PanelSection>
 
-        <PanelSection title="Internals" defaultOpen={false}>
-          <SubLabel>Plate</SubLabel>
-          <OptionList
+        <PanelSection title="Plate" defaultOpen={false}>
+          <ChipRow
+            label="Material"
             options={PLATE_OPTIONS.map((p) => ({
               id: p,
               label: PLATE_VISUAL[p].name,
-              description: PLATE_VISUAL[p].description,
               swatch: PLATE_VISUAL[p].swatch,
             }))}
             value={plateMaterial}
@@ -296,16 +294,6 @@ export default function App() {
           </div>
         </PanelSection>
       </SidePanel>
-    </div>
-  );
-}
-
-function SubLabel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return (
-    <div
-      className={`px-4 pb-1 pt-1 text-[10px] uppercase tracking-wider text-zinc-400 dark:text-neutral-600 ${className}`}
-    >
-      {children}
     </div>
   );
 }
