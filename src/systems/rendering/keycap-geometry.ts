@@ -11,15 +11,15 @@ export interface KeycapShape {
 }
 
 /**
- * Build a tapered, top-dished keycap geometry.
+ * Build a tapered, chamfered, dished keycap geometry.
  *
- * Approach: start from a BoxGeometry with extra segments on the top face,
- * then deform vertices so:
- *   - X/Z scale lerps from full at the bottom to (full - topShrink) at the top
- *     -> sloped side walls
- *   - Top-face vertices get an additional Y offset based on radial distance from
- *     the top centre, with a cosine falloff -> spherical-ish bowl
- * Recompute normals after deformation so lighting stays correct.
+ * Vertical structure (3 rings along Y):
+ *   - Bottom ring (y = -H/2):         full width × depth
+ *   - Shoulder ring (y ≈ 0.7H above bottom): mostly tapered (≈35% of total taper)
+ *   - Top ring (y = +H/2):            fully tapered + spherical dish
+ *
+ * This produces a real-keycap silhouette: nearly-vertical lower walls, a
+ * visible chamfer fold near the top, and a concave bowl on the top face.
  */
 export function makeKeycapGeometry({
   width: W,
@@ -36,31 +36,66 @@ export function makeKeycapGeometry({
   const topHalfW = Math.max(0.001, halfW - topShrinkX / 2);
   const topHalfD = Math.max(0.001, halfD - topShrinkZ / 2);
 
-  const geo = new THREE.BoxGeometry(W, H, D, topSegments, 1, topSegments);
+  // Position of the chamfer "shoulder" within the height (0 = bottom, 1 = top).
+  const SHOULDER_T = 0.70;
+  // Fraction of the bottom→top taper that has happened by the shoulder.
+  // Lower values = more pronounced chamfer (since more taper happens above the
+  // shoulder, in a shorter vertical distance).
+  const SHOULDER_TAPER_T = 0.35;
+
+  const shoulderY = -halfH + SHOULDER_T * H;
+  const shoulderHalfW = halfW + (topHalfW - halfW) * SHOULDER_TAPER_T;
+  const shoulderHalfD = halfD + (topHalfD - halfD) * SHOULDER_TAPER_T;
+
+  // heightSegments = 2 gives us 3 rings (bottom, middle, top). We reposition
+  // the middle ring up to shoulderY to form the chamfer.
+  const geo = new THREE.BoxGeometry(W, H, D, topSegments, 2, topSegments);
   const pos = geo.attributes.position;
-  const TOP_EPS = 1e-4;
+  const EPS = 1e-4;
 
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i);
     const y = pos.getY(i);
     const z = pos.getZ(i);
 
-    // Taper: lerp half-extents by vertical position. t=0 at bottom, 1 at top.
-    const t = (y + halfH) / H;
-    const sx = THREE.MathUtils.lerp(halfW, topHalfW, t);
-    const sz = THREE.MathUtils.lerp(halfD, topHalfD, t);
-    const newX = (x / halfW) * sx;
-    const newZ = (z / halfD) * sz;
+    // Pick the target ring based on the original Y position.
+    let newY: number;
+    let halfWAtY: number;
+    let halfDAtY: number;
+    let isTopRing = false;
+
+    if (y < -halfH + EPS) {
+      // Bottom ring
+      newY = -halfH;
+      halfWAtY = halfW;
+      halfDAtY = halfD;
+    } else if (y > halfH - EPS) {
+      // Top ring
+      newY = halfH;
+      halfWAtY = topHalfW;
+      halfDAtY = topHalfD;
+      isTopRing = true;
+    } else {
+      // Middle ring (originally at y=0). Promote to the shoulder height
+      // and apply the shoulder taper. This is where the chamfer kink lives.
+      newY = shoulderY;
+      halfWAtY = shoulderHalfW;
+      halfDAtY = shoulderHalfD;
+    }
+
+    const newX = (x / halfW) * halfWAtY;
+    const newZ = (z / halfD) * halfDAtY;
     pos.setX(i, newX);
+    pos.setY(i, newY);
     pos.setZ(i, newZ);
 
-    // Top face dish: indent vertices on the top face by a smooth cosine bowl.
-    if (Math.abs(y - halfH) < TOP_EPS) {
+    // Top face dish: cosine bowl from centre to edge.
+    if (isTopRing) {
       const xn = newX / topHalfW;
       const zn = newZ / topHalfD;
       const r = Math.min(1, Math.sqrt(xn * xn + zn * zn));
       const indent = Math.cos(r * Math.PI * 0.5); // 1 at centre, 0 at edge
-      pos.setY(i, y - indent * dishDepth);
+      pos.setY(i, halfH - indent * dishDepth);
     }
   }
 
