@@ -46,7 +46,7 @@ export const PRESETS: Preset[] = [
       keycap: 'thin-abs',
       keycapShape: 'chiclet',
       plateMaterial: 'aluminum',
-      layoutFamily: 'sixty-five-percent',
+      layoutFamily: 'tkl',
       keyboardStyle: 'mac',
     },
   },
@@ -60,7 +60,7 @@ export const PRESETS: Preset[] = [
       keycap: 'thin-abs',
       keycapShape: 'low-profile-mech',
       plateMaterial: 'polycarbonate',
-      layoutFamily: 'sixty-five-percent',
+      layoutFamily: 'seventy-five-percent',
       keyboardStyle: 'mac',
     },
   },
@@ -74,28 +74,24 @@ export const PRESETS: Preset[] = [
       keycap: 'thick-pbt',
       keycapShape: 'oem',
       plateMaterial: 'fr4',
-      layoutFamily: 'sixty-five-percent',
+      layoutFamily: 'seventy-five-percent',
       keyboardStyle: 'windows',
       // K2 authentic colorway — two-tone PBT on dark aluminum
-      caseColorOverride: '#1d1f23',     // near-black aluminum frame
-      capColorOverride: '#e8e4d8',      // cream alphas (default)
-      labelColorOverride: '#2a2d33',    // dark legends on cream
+      caseColorOverride: '#1d1f23',
+      capColorOverride: '#e8e4d8',
+      labelColorOverride: '#2a2d33',
       zoneColors: {
-        // Mods + large keys (Tab/Caps/Shift/Enter/Backspace/Ctrl/Win/Alt/nav cluster)
-        // are charcoal grey with light legends.
         mod: { cap: '#3d4045', label: '#dcdcdc' },
         largekey: { cap: '#3d4045', label: '#dcdcdc' },
-        // Spacebar stays the cream default — matches the real K2.
       },
       keyColors: {
-        // K2's signature orange Esc accent. In 65% we don't have a dedicated
-        // Esc key (Esc lives behind Fn+`), so the orange sits on Backquote
-        // (top-left corner) until 75% lands and gives us a real Esc row.
-        Backquote: { cap: '#ff6b3d', label: '#ffffff' },
+        // K2's signature orange Esc accent on the actual Esc key now that
+        // we have a 75% layout with a real F-row.
+        Escape: { cap: '#ff6b3d', label: '#ffffff' },
       },
     },
     authenticityNotes:
-      'Real K2 is 75% (F-row across the top). Currently rendered as 65%, so the F-row is missing and the orange accent sits on ` instead of Esc. Two-tone caps and dark aluminum frame are accurate. Audio is still generic Cherry Brown — a K2-specific recording would close the last gap.',
+      'Layout, two-tone caps, dark aluminum frame, and orange Esc accent all match the real K2. The remaining gap is audio — currently a generic Cherry Brown pack rather than a K2-specific recording.',
   },
   {
     id: 'gmmk-pro-pandas',
@@ -107,7 +103,7 @@ export const PRESETS: Preset[] = [
       keycap: 'thick-pbt',
       keycapShape: 'cherry',
       plateMaterial: 'aluminum',
-      layoutFamily: 'sixty-five-percent',
+      layoutFamily: 'seventy-five-percent',
       keyboardStyle: 'windows',
     },
   },

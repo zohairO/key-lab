@@ -1,6 +1,7 @@
 import type { KeyboardStyle, Layout, LayoutFamily } from '../../types';
 import { sixtyPercentWin, sixtyPercentMac } from './sixty-percent';
 import { sixtyFivePercentWin, sixtyFivePercentMac } from './sixty-five-percent';
+import { seventyFivePercentWin, seventyFivePercentMac } from './seventy-five-percent';
 import { tklWin, tklMac } from './tkl';
 
 export const LAYOUTS: Layout[] = [
@@ -8,6 +9,8 @@ export const LAYOUTS: Layout[] = [
   sixtyPercentMac,
   sixtyFivePercentWin,
   sixtyFivePercentMac,
+  seventyFivePercentWin,
+  seventyFivePercentMac,
   tklWin,
   tklMac,
 ];
@@ -15,6 +18,7 @@ export const LAYOUTS: Layout[] = [
 export const LAYOUT_FAMILIES: { id: LayoutFamily; name: string }[] = [
   { id: 'sixty-percent', name: '60% ANSI' },
   { id: 'sixty-five-percent', name: '65% ANSI' },
+  { id: 'seventy-five-percent', name: '75% ANSI' },
   { id: 'tkl', name: 'TKL ANSI' },
 ];
 
@@ -26,7 +30,6 @@ export const KEYBOARD_STYLES: { id: KeyboardStyle; name: string }[] = [
 export const DEFAULT_LAYOUT_FAMILY: LayoutFamily = 'sixty-percent';
 export const DEFAULT_KEYBOARD_STYLE: KeyboardStyle = 'windows';
 
-/** Resolve (family, style) → the concrete Layout. */
 export function resolveLayout(family: LayoutFamily, style: KeyboardStyle): Layout {
   const id = `${family}-${style}`;
   return LAYOUTS.find((l) => l.id === id) ?? sixtyPercentWin;
@@ -37,6 +40,8 @@ export {
   sixtyPercentMac,
   sixtyFivePercentWin,
   sixtyFivePercentMac,
+  seventyFivePercentWin,
+  seventyFivePercentMac,
   tklWin,
   tklMac,
 };

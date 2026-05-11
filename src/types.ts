@@ -8,7 +8,7 @@ export type PlateMaterial = 'fr4' | 'polycarbonate' | 'aluminum' | 'brass';
 
 export type KeyboardStyle = 'windows' | 'mac';
 
-export type LayoutFamily = 'sixty-percent' | 'sixty-five-percent' | 'tkl';
+export type LayoutFamily = 'sixty-percent' | 'sixty-five-percent' | 'seventy-five-percent' | 'tkl';
 
 export type Theme = 'dark' | 'light';
 
