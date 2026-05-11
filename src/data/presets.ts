@@ -122,6 +122,20 @@ export const PRESETS: Preset[] = [
     },
   },
   {
+    id: 'drop-ctrl-boxwhite',
+    name: 'Drop CTRL / Box White',
+    description: 'Aluminum TKL, Kailh Box Whites — crisp clicky',
+    build: {
+      boardType: 'mechanical',
+      packId: 'kalih-box-white',
+      keycap: 'thick-pbt',
+      keycapShape: 'cherry',
+      plateMaterial: 'aluminum',
+      layoutFamily: 'tkl',
+      keyboardStyle: 'windows',
+    },
+  },
+  {
     id: 'sa-vintage',
     name: 'Vintage SA',
     description: 'Cream tall caps, brass plate, deep keystrokes',

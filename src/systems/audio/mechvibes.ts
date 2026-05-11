@@ -1,4 +1,4 @@
-import type { SpritePack } from './sound-pack';
+import type { MultiFilePack, SpritePack } from './sound-pack';
 
 /**
  * iohook scancode -> KeyboardEvent.code.
@@ -81,6 +81,50 @@ interface BuildOpts {
   audioUrl: string;
   source?: string;
   config: MechvibesConfig;
+}
+
+/** Mechvibes "multi" config format — each scancode maps to its own filename. */
+export interface MechvibesMultiConfig {
+  id: string;
+  name: string;
+  defines: Record<string, unknown>;  // scancode → file basename
+}
+
+interface BuildMultiOpts {
+  id: string;
+  name: string;
+  /** Base URL where the per-key audio files live, e.g. '/audio/kalih-box-white'. */
+  audioBase: string;
+  source?: string;
+  config: MechvibesMultiConfig;
+}
+
+/**
+ * Convert a Mechvibes "multi" config (per-scancode filenames) into a
+ * MultiFilePack. Every key lands in `overrides` keyed by event.code; rows
+ * stays empty (no per-row fallback). Filenames are URL-encoded so spaces
+ * and parentheses in pack filenames serve cleanly.
+ */
+export function buildMechvibesMultiPack({
+  id, name, audioBase, source, config,
+}: BuildMultiOpts): MultiFilePack {
+  const overrides: Record<string, string> = {};
+  for (const [scanStr, value] of Object.entries(config.defines)) {
+    if (typeof value !== 'string') continue;
+    const scan = Number.parseInt(scanStr, 10);
+    const code = IOHOOK_TO_CODE[scan];
+    if (!code) continue;
+    if (overrides[code]) continue; // first occurrence wins
+    overrides[code] = `${audioBase}/${encodeURIComponent(value)}`;
+  }
+  return {
+    format: 'multi-file',
+    id,
+    name,
+    source,
+    rows: [],
+    overrides,
+  };
 }
 
 /** Convert a Mechvibes config + an audio URL into our SpritePack format. */

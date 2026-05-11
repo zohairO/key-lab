@@ -11,6 +11,7 @@ import {
 import { holyPandas } from './data/sound-packs/holy-pandas';
 import { cherryMxBrownPbt } from './data/sound-packs/cherrymx-brown-pbt';
 import { cherryMxBluePbt } from './data/sound-packs/cherrymx-blue-pbt';
+import { kalihBoxWhite } from './data/sound-packs/kalih-box-white';
 import { KEYCAP_LABEL, KEYCAP_VISUAL } from './data/keycap-profiles';
 import { BOARD_CONFIG, BOARD_TYPE_OPTIONS } from './data/board-types';
 import { PLATE_OPTIONS, PLATE_VISUAL } from './data/plate-materials';
@@ -34,7 +35,7 @@ import { PanelSection } from './ui/PanelSection';
 import { OptionList } from './ui/OptionList';
 import { ChipRow } from './ui/ChipRow';
 
-const PACKS: SoundPack[] = [cherryMxBrownPbt, holyPandas, cherryMxBluePbt];
+const PACKS: SoundPack[] = [cherryMxBrownPbt, holyPandas, cherryMxBluePbt, kalihBoxWhite];
 const KEYCAP_OPTIONS: KeycapProfile[] = ['thin-abs', 'thick-pbt', 'tall-pbt'];
 
 const DEFAULTS: BuildState = {
