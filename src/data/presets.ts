@@ -91,7 +91,7 @@ export const PRESETS: Preset[] = [
       },
     },
     authenticityNotes:
-      'Layout, two-tone caps, dark aluminum frame, and orange Esc accent all match the real K2. The remaining gap is audio — currently a generic Cherry Brown pack rather than a K2-specific recording.',
+      'Layout matches the real K2: 75% with F-row ending in PrtSc / Del / Light Effect, and right-column nav cycling PgUp → PgDn → Home → End. Two-tone caps, dark aluminum frame, and orange Esc accent are accurate. The remaining gap is audio — currently a generic Cherry Brown pack rather than a K2-specific recording.',
   },
   {
     id: 'gmmk-pro-pandas',
