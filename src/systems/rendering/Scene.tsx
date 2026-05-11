@@ -18,7 +18,7 @@ export function Scene({ children, theme }: SceneProps) {
   return (
     <Canvas
       shadows
-      camera={{ position: [0, 7, 9], fov: 40 }}
+      camera={{ position: [0, 9, 13.5], fov: 38 }}
       gl={{ antialias: true }}
       dpr={[1, 2]}
     >
@@ -44,7 +44,7 @@ export function Scene({ children, theme }: SceneProps) {
         makeDefault
         enablePan={false}
         minDistance={5}
-        maxDistance={20}
+        maxDistance={28}
         maxPolarAngle={Math.PI / 2.05}
         target={[0, 0, 0]}
       />

@@ -23,7 +23,7 @@ const KEYCAP_VALUES: KeycapProfile[] = ['thin-abs', 'thick-pbt', 'tall-pbt'];
 const SHAPE_VALUES: KeycapShape[] = ['cherry', 'oem', 'sa', 'mt3', 'dsa', 'xda', 'chiclet', 'low-profile-mech'];
 const BOARD_VALUES: BoardType[] = ['flat', 'low-profile', 'mechanical'];
 const PLATE_VALUES: PlateMaterial[] = ['fr4', 'polycarbonate', 'aluminum', 'brass'];
-const FAMILY_VALUES: LayoutFamily[] = ['sixty-percent', 'sixty-five-percent'];
+const FAMILY_VALUES: LayoutFamily[] = ['sixty-percent', 'sixty-five-percent', 'tkl'];
 const STYLE_VALUES: KeyboardStyle[] = ['windows', 'mac'];
 const THEME_VALUES: Theme[] = ['dark', 'light'];
 

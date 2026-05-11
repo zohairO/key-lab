@@ -19,6 +19,12 @@ export function buildLayout({ id, name, rows }: LayoutSpec): Layout {
   rows.forEach((row, y) => {
     let x = 0;
     for (const [w, code, label, zone] of row) {
+      if (!code) {
+        // Spacer: occupies width but emits no key. Used for F-row group gaps,
+        // the gap between the main block and the nav cluster on TKL, etc.
+        x += w;
+        continue;
+      }
       keys.push({
         code,
         label,

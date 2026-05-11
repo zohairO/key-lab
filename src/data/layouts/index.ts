@@ -1,17 +1,21 @@
 import type { KeyboardStyle, Layout, LayoutFamily } from '../../types';
 import { sixtyPercentWin, sixtyPercentMac } from './sixty-percent';
 import { sixtyFivePercentWin, sixtyFivePercentMac } from './sixty-five-percent';
+import { tklWin, tklMac } from './tkl';
 
 export const LAYOUTS: Layout[] = [
   sixtyPercentWin,
   sixtyPercentMac,
   sixtyFivePercentWin,
   sixtyFivePercentMac,
+  tklWin,
+  tklMac,
 ];
 
 export const LAYOUT_FAMILIES: { id: LayoutFamily; name: string }[] = [
   { id: 'sixty-percent', name: '60% ANSI' },
   { id: 'sixty-five-percent', name: '65% ANSI' },
+  { id: 'tkl', name: 'TKL ANSI' },
 ];
 
 export const KEYBOARD_STYLES: { id: KeyboardStyle; name: string }[] = [
@@ -28,10 +32,11 @@ export function resolveLayout(family: LayoutFamily, style: KeyboardStyle): Layou
   return LAYOUTS.find((l) => l.id === id) ?? sixtyPercentWin;
 }
 
-// Re-export individuals for any direct consumer
 export {
   sixtyPercentWin,
   sixtyPercentMac,
   sixtyFivePercentWin,
   sixtyFivePercentMac,
+  tklWin,
+  tklMac,
 };
