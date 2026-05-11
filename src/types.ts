@@ -12,6 +12,16 @@ export type LayoutFamily = 'sixty-percent' | 'sixty-five-percent';
 
 export type Theme = 'dark' | 'light';
 
+export type KeycapShape =
+  | 'cherry'
+  | 'oem'
+  | 'sa'
+  | 'mt3'
+  | 'dsa'
+  | 'xda'
+  | 'chiclet'           // forced by flat boards
+  | 'low-profile-mech'; // forced by low-profile boards
+
 export interface KeyDef {
   code: string;     // KeyboardEvent.code, e.g. "KeyA", "Space"
   label: string;

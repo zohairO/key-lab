@@ -2,6 +2,7 @@ import type {
   BoardType,
   KeyboardStyle,
   KeycapProfile,
+  KeycapShape,
   LayoutFamily,
   PlateMaterial,
   Zone,
@@ -15,6 +16,7 @@ export interface Preset {
     boardType: BoardType;
     packId: string;
     keycap: KeycapProfile;
+    keycapShape: KeycapShape;
     plateMaterial: PlateMaterial;
     layoutFamily: LayoutFamily;
     keyboardStyle: KeyboardStyle;
@@ -42,6 +44,7 @@ export const PRESETS: Preset[] = [
       boardType: 'flat',
       packId: 'cherrymx-brown-pbt',
       keycap: 'thin-abs',
+      keycapShape: 'chiclet',
       plateMaterial: 'aluminum',
       layoutFamily: 'sixty-five-percent',
       keyboardStyle: 'mac',
@@ -55,6 +58,7 @@ export const PRESETS: Preset[] = [
       boardType: 'low-profile',
       packId: 'cherrymx-brown-pbt',
       keycap: 'thin-abs',
+      keycapShape: 'low-profile-mech',
       plateMaterial: 'polycarbonate',
       layoutFamily: 'sixty-five-percent',
       keyboardStyle: 'mac',
@@ -68,6 +72,7 @@ export const PRESETS: Preset[] = [
       boardType: 'mechanical',
       packId: 'cherrymx-brown-pbt',
       keycap: 'thick-pbt',
+      keycapShape: 'oem',
       plateMaterial: 'fr4',
       layoutFamily: 'sixty-five-percent',
       keyboardStyle: 'windows',
@@ -100,6 +105,7 @@ export const PRESETS: Preset[] = [
       boardType: 'mechanical',
       packId: 'holy-pandas',
       keycap: 'thick-pbt',
+      keycapShape: 'cherry',
       plateMaterial: 'aluminum',
       layoutFamily: 'sixty-five-percent',
       keyboardStyle: 'windows',
@@ -113,6 +119,7 @@ export const PRESETS: Preset[] = [
       boardType: 'mechanical',
       packId: 'cherrymx-blue-pbt',
       keycap: 'thick-pbt',
+      keycapShape: 'oem',
       plateMaterial: 'fr4',
       layoutFamily: 'sixty-percent',
       keyboardStyle: 'windows',
@@ -126,6 +133,7 @@ export const PRESETS: Preset[] = [
       boardType: 'mechanical',
       packId: 'holy-pandas',
       keycap: 'tall-pbt',
+      keycapShape: 'sa',
       plateMaterial: 'brass',
       layoutFamily: 'sixty-percent',
       keyboardStyle: 'windows',

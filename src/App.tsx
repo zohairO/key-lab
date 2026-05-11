@@ -14,8 +14,17 @@ import { cherryMxBluePbt } from './data/sound-packs/cherrymx-blue-pbt';
 import { KEYCAP_LABEL, KEYCAP_VISUAL } from './data/keycap-profiles';
 import { BOARD_CONFIG, BOARD_TYPE_OPTIONS } from './data/board-types';
 import { PLATE_OPTIONS, PLATE_VISUAL } from './data/plate-materials';
+import { KEYCAP_SHAPES, KEYCAP_SHAPE_OPTIONS } from './data/keycap-shapes';
 import { PRESETS } from './data/presets';
-import type { BoardType, KeyboardStyle, KeycapProfile, LayoutFamily, PlateMaterial, Theme } from './types';
+import type {
+  BoardType,
+  KeyboardStyle,
+  KeycapProfile,
+  KeycapShape,
+  LayoutFamily,
+  PlateMaterial,
+  Theme,
+} from './types';
 import { useAudioEngine } from './hooks/useAudioEngine';
 import { usePressedKeys } from './hooks/usePressedKeys';
 import { readBuildHash, writeBuildHash, type BuildState } from './lib/url-state';
@@ -31,6 +40,7 @@ const DEFAULTS: BuildState = {
   boardType: 'mechanical',
   packId: cherryMxBrownPbt.id,
   keycap: 'thick-pbt',
+  keycapShape: 'oem',
   plateMaterial: 'aluminum',
   layoutFamily: DEFAULT_LAYOUT_FAMILY,
   keyboardStyle: DEFAULT_KEYBOARD_STYLE,
@@ -44,6 +54,9 @@ export default function App() {
     initial.packId && PACKS.some((p) => p.id === initial.packId) ? initial.packId : DEFAULTS.packId,
   );
   const [keycap, setKeycap] = useState<KeycapProfile>(initial.keycap ?? DEFAULTS.keycap);
+  const [keycapShape, setKeycapShape] = useState<KeycapShape>(
+    initial.keycapShape ?? DEFAULTS.keycapShape,
+  );
   const [plateMaterial, setPlateMaterial] = useState<PlateMaterial>(
     initial.plateMaterial ?? DEFAULTS.plateMaterial,
   );
@@ -67,8 +80,11 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
-    writeBuildHash({ boardType, packId, keycap, plateMaterial, layoutFamily, keyboardStyle, theme });
-  }, [boardType, packId, keycap, plateMaterial, layoutFamily, keyboardStyle, theme]);
+    writeBuildHash({
+      boardType, packId, keycap, keycapShape, plateMaterial,
+      layoutFamily, keyboardStyle, theme,
+    });
+  }, [boardType, packId, keycap, keycapShape, plateMaterial, layoutFamily, keyboardStyle, theme]);
 
   const { ready } = useAudioEngine({ pack, layout, keycap, plateMaterial });
   const pressedKeys = usePressedKeys();
@@ -78,6 +94,7 @@ export default function App() {
       p.build.boardType === boardType &&
       p.build.packId === packId &&
       p.build.keycap === keycap &&
+      p.build.keycapShape === keycapShape &&
       p.build.plateMaterial === plateMaterial &&
       p.build.layoutFamily === layoutFamily &&
       p.build.keyboardStyle === keyboardStyle,
@@ -102,6 +119,7 @@ export default function App() {
     setBoardType(preset.build.boardType);
     setPackId(preset.build.packId);
     setKeycap(preset.build.keycap);
+    setKeycapShape(preset.build.keycapShape);
     setPlateMaterial(preset.build.plateMaterial);
     setLayoutFamily(preset.build.layoutFamily);
     setKeyboardStyle(preset.build.keyboardStyle);
@@ -111,6 +129,7 @@ export default function App() {
     setBoardType(DEFAULTS.boardType);
     setPackId(DEFAULTS.packId);
     setKeycap(DEFAULTS.keycap);
+    setKeycapShape(DEFAULTS.keycapShape);
     setPlateMaterial(DEFAULTS.plateMaterial);
     setLayoutFamily(DEFAULTS.layoutFamily);
     setKeyboardStyle(DEFAULTS.keyboardStyle);
@@ -124,6 +143,7 @@ export default function App() {
         <Keyboard
           pressedKeys={pressedKeys}
           keycap={keycap}
+          keycapShape={keycapShape}
           boardType={boardType}
           plateMaterial={plateMaterial}
           layout={layout}
@@ -222,6 +242,7 @@ export default function App() {
         </PanelSection>
 
         <PanelSection title="Keycaps" defaultOpen>
+          <SubLabel>Colorway</SubLabel>
           <OptionList
             options={KEYCAP_OPTIONS.map((k) => ({
               id: k,
@@ -231,6 +252,28 @@ export default function App() {
             value={keycap}
             onChange={(v) => setKeycap(v as KeycapProfile)}
           />
+          {boardType === 'mechanical' ? (
+            <>
+              <SubLabel className="pt-3">Profile shape</SubLabel>
+              <OptionList
+                options={KEYCAP_SHAPE_OPTIONS.map((s) => ({
+                  id: s,
+                  label: KEYCAP_SHAPES[s].name,
+                  description: KEYCAP_SHAPES[s].description,
+                }))}
+                value={keycapShape}
+                onChange={(v) => setKeycapShape(v as KeycapShape)}
+              />
+            </>
+          ) : (
+            <div className="px-4 pt-3 text-[11px] leading-snug text-zinc-500 dark:text-neutral-500">
+              Profile shape is fixed by board type:{' '}
+              <span className="text-zinc-700 dark:text-neutral-300">
+                {KEYCAP_SHAPES[BOARD_CONFIG[boardType].forceKeycapShape!].name}
+              </span>
+              .
+            </div>
+          )}
         </PanelSection>
 
         <PanelSection title="Internals" defaultOpen={false}>
