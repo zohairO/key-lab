@@ -17,6 +17,10 @@ export interface BuildState {
   layoutFamily: LayoutFamily;
   keyboardStyle: KeyboardStyle;
   theme: Theme;
+  /** Preset id whose visual identity is currently "stuck" — independent of
+   *  current build fields. Persists across setting changes until Custom is
+   *  chosen or the user clicks Reset. */
+  appliedPresetId: string | null;
 }
 
 const KEYCAP_VALUES: KeycapProfile[] = ['thin-abs', 'thick-pbt', 'tall-pbt'];
@@ -56,6 +60,8 @@ export function readBuildHash(): Partial<BuildState> {
   if (style && isKeyboardStyle(style)) out.keyboardStyle = style;
   const theme = params.get('theme');
   if (theme && isTheme(theme)) out.theme = theme;
+  const preset = params.get('preset');
+  if (preset) out.appliedPresetId = preset;
   return out;
 }
 
@@ -69,6 +75,7 @@ export function writeBuildHash(state: BuildState): void {
   params.set('shape', state.keycapShape);
   params.set('plate', state.plateMaterial);
   params.set('theme', state.theme);
+  if (state.appliedPresetId) params.set('preset', state.appliedPresetId);
   const next = `#${params.toString()}`;
   if (window.location.hash !== next) {
     window.history.replaceState(null, '', next);
