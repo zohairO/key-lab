@@ -4,8 +4,9 @@ Interactive 3D mechanical-keyboard simulator. Browse curated keyboards or build 
 
 ## Before writing any code
 
-1. Read `.claude/rules/architecture.md` once per session — it owns the big-picture decisions (v0 scope, the "whoa moment" definition, 3D model strategy, sound strategy, multi-category extensibility rules, deferred items).
-2. Confirm the current phase. v0 = smallest thing that proves the concept. Don't build Phase 2/3/4 features until v0 ships and someone says "whoa."
+1. **Read [`HANDOVER.md`](./HANDOVER.md) first.** It's the operational state of the project — what's shipped, what's broken, where every tweakable value lives, and what's next. Update it when you finish substantive work.
+2. Read `.claude/rules/architecture.md` once per session — it owns the big-picture decisions (v0 scope, the "whoa moment" definition, 3D model strategy, sound strategy, multi-category extensibility rules, deferred items).
+3. Confirm the current phase. v0 = smallest thing that proves the concept. Don't build Phase 2/3/4 features until v0 ships and someone says "whoa."
 
 ## Run it
 
